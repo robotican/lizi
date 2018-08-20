@@ -1,6 +1,0 @@
-<package>
-  <description brief="robotican_lizi">robotican_lizi</description>
-  <depend package="gazebo" />
-  <author>me</author>
-  <license>BSD</license>
-</package>
