@@ -1,6 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
 <launch>
-  <include
-    file="$(find gazebo_ros)/launch/empty_world.launch" />
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">	    
+    <arg name="world_name" value="worlds/empty.world"/>
+    <arg name="gui" value="true"/>	     
+  </include>
   <node
     name="tf_footprint_base"
     pkg="tf"
@@ -10,7 +15,7 @@
     name="spawn_model"
     pkg="gazebo_ros"
     type="spawn_model"
-    args="-file $(find robotican_lizi.SLDASM)/robots/robotican_lizi.SLDASM.urdf -urdf -model robotican_lizi.SLDASM"
+    args="-file $(find lizi_description)/urdf/lizi.urdf -urdf -model lizi"
     output="screen" />
   <node
     name="fake_joint_calibration"
