@@ -1,0 +1,436 @@
+<robot
+  name="robotican_lizi.SLDASM">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.00417829000094622 0.00524236473615063 0.0404695921883583"
+        rpy="0 0 0" />
+      <mass
+        value="0.470251986966204" />
+      <inertia
+        ixx="0.00417603662557191"
+        ixy="-0.000134866417293007"
+        ixz="0.000508431621755966"
+        iyy="0.00839520338356809"
+        iyz="-8.28069581519405E-06"
+        izz="0.00987627573316224" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="footprint_link" />
+  <joint
+    name="footprint_joint"
+    type="fixed">
+    <origin
+      xyz="0 0 -0.0762"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="footprint_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="laser_link">
+    <inertial>
+      <origin
+        xyz="-3.97603836856664E-05 0.000165294162433824 -0.0229041562479139"
+        rpy="0 0 0" />
+      <mass
+        value="0.133020399094738" />
+      <inertia
+        ixx="6.95907638582217E-05"
+        ixy="6.16520646181772E-08"
+        ixz="1.62702618497649E-07"
+        iyy="7.00657431385141E-05"
+        iyz="4.949487469302E-07"
+        izz="4.58412779272461E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/laser_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/laser_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="laser_joint"
+    type="fixed">
+    <origin
+      xyz="0.1495 0 0.0790052090034135"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="laser_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="depth_cam_link">
+    <inertial>
+      <origin
+        xyz="-0.0131032740950953 0.000595431416784195 -0.000126402566328898"
+        rpy="0 0 0" />
+      <mass
+        value="0.0446256012085415" />
+      <inertia
+        ixx="2.62358816469286E-05"
+        ixy="3.51148589025837E-07"
+        ixz="3.91275344099617E-11"
+        iyy="4.02618646244089E-06"
+        iyz="-6.05255657176089E-09"
+        izz="2.64982132448101E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/depth_cam_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/depth_cam_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="depth_cam_joint"
+    type="fixed">
+    <origin
+      xyz="0.176417327435888 0.000478302882383396 0.121932872993568"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="depth_cam_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="left_urf_link" />
+  <joint
+    name="left_urf_joint"
+    type="fixed">
+    <origin
+      xyz="0.0145422866940573 0.1055 0.0902"
+      rpy="0 0 1.5707963267949" />
+    <parent
+      link="base_link" />
+    <child
+      link="left_urf_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="rear_urf_link" />
+  <joint
+    name="rear_urf_joint"
+    type="fixed">
+    <origin
+      xyz="-0.18 0 0.0902"
+      rpy="0 0 3.14159265358979" />
+    <parent
+      link="base_link" />
+    <child
+      link="rear_urf_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="right_urf_link" />
+  <joint
+    name="right_urf_joint"
+    type="fixed">
+    <origin
+      xyz="0.0145422866940573 -0.1055 0.0902"
+      rpy="0 0 -1.5707963267949" />
+    <parent
+      link="base_link" />
+    <child
+      link="right_urf_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="FL_wheel_link">
+    <inertial>
+      <origin
+        xyz="-9.13569785487844E-06 -0.00111495248212731 4.36496298178307E-07"
+        rpy="0 0 0" />
+      <mass
+        value="0.201564744790293" />
+      <inertia
+        ixx="0.000328747164153403"
+        ixy="-8.85550647204458E-09"
+        ixz="-7.63613181374399E-12"
+        iyy="0.000623978887109001"
+        iyz="-5.84653211658503E-10"
+        izz="0.000328729878144945" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/FL_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/FL_wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="FL_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="0.13 0.1332125 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="FL_wheel_link" />
+    <axis
+      xyz="0 0.999999999981052 0" />
+  </joint>
+  <link
+    name="RL_wheel_link">
+    <inertial>
+      <origin
+        xyz="-9.13569759561361E-06 -0.00111495248195748 4.36496218545773E-07"
+        rpy="0 0 0" />
+      <mass
+        value="0.201564744787106" />
+      <inertia
+        ixx="0.000328747164152227"
+        ixy="-8.85550650155265E-09"
+        ixz="-7.63613763619786E-12"
+        iyy="0.000623978887108079"
+        iyz="-5.84652766925557E-10"
+        izz="0.000328729878144284" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/RL_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/RL_wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RL_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.13 0.1332125 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="RL_wheel_link" />
+    <axis
+      xyz="0 0.999999999993684 0" />
+  </joint>
+  <link
+    name="FR_wheel_link">
+    <inertial>
+      <origin
+        xyz="9.13569801772041E-06 0.00111495248556576 4.364813301491E-07"
+        rpy="0 0 0" />
+      <mass
+        value="0.201564744855459" />
+      <inertia
+        ixx="0.000328747164305643"
+        ixy="-8.85550674928916E-09"
+        ixz="7.63798343820813E-12"
+        iyy="0.000623978887253213"
+        iyz="5.84687601938336E-10"
+        izz="0.000328729878152203" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/FR_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/FR_wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="FR_wheell_joint"
+    type="continuous">
+    <origin
+      xyz="0.130001640097326 -0.1332125 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="FR_wheel_link" />
+    <axis
+      xyz="0 0.999999999981052 0" />
+  </joint>
+  <link
+    name="RR_wheel_link">
+    <inertial>
+      <origin
+        xyz="-9.13569793242752E-06 0.00111495248553414 -4.36481284494934E-07"
+        rpy="0 0 0" />
+      <mass
+        value="0.201564744852236" />
+      <inertia
+        ixx="0.000328747164304387"
+        ixy="8.85550684008093E-09"
+        ixz="7.63771005834694E-12"
+        iyy="0.000623978887252081"
+        iyz="-5.84687536019145E-10"
+        izz="0.000328729878151301" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/RR_wheel_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robotican_lizi.SLDASM/meshes/RR_wheel_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="RR_wheel_joint"
+    type="continuous">
+    <origin
+      xyz="-0.13 -0.1332125 0"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="RR_wheel_link" />
+    <axis
+      xyz="0 0.999999999993684 0" />
+  </joint>
+  <link
+    name="front_camera_link" />
+  <joint
+    name="front_camera_joint"
+    type="fixed">
+    <origin
+      xyz="0.17275 0.068 0.0202"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="front_camera_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>

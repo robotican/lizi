@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<launch>
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find lizi_control)/config/lizi_control.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node name="controller_spawner"
+    pkg="controller_manager"
+    type="spawner" respawn="false"
+    output="screen"
+    args="robot_state_controller mobile_base_controller"
+  />
+  
+</launch>

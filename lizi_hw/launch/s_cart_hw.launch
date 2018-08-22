@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <node name="s_cart_hw_node" pkg="s_cart_hw" type="s_cart_hw_node" respawn="false" output="screen" />
+
+</launch>
