@@ -9,7 +9,7 @@
     default="False" />
   <param
     name="robot_description"
-    textfile="$(find lizi_description)/urdf/lizi.urdf" />
+    textfile="$(find lizi_description)/urdf/lizi.xacro" />
   <param
     name="use_gui"
     value="$(arg gui)" />

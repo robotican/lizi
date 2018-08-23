@@ -10,6 +10,7 @@ project(lizi_hw)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
         controller_manager
+        control_toolbox
         ric_interface_ros
 )
 
@@ -102,12 +103,12 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
-#catkin_package(
+catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES lizi_hardware_interface
 #  CATKIN_DEPENDS roscpp ric_interface
 #  DEPENDS system_lib
-#)
+)
 
 ###########
 ## Build ##
@@ -137,10 +138,12 @@ include_directories(
          src/lizi_hw_node.cpp
          src/lizi_hw.cpp
          src/ricboard.cpp
+         src/wheels_control.cpp
 
          include/ricboard.h
          include/lizi_hw.h
-         include/wheel.h)
+         include/wheel.h
+         include/wheels_control.h)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

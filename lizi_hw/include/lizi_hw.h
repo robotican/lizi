@@ -15,13 +15,9 @@ private:
 
     ros::NodeHandle *node_handle_;
 
-    ros::Time last_write_time_;
-
     hardware_interface::JointStateInterface joint_state_interface_;
 
     hardware_interface::VelocityJointInterface vel_joint_interface_;
-    hardware_interface::EffortJointInterface effort_joint_interface_;
-
 
     RicBoard ric_;
 
@@ -31,7 +27,7 @@ public:
 
     LiziHW(ros::NodeHandle &nh);
 
-    void write();
+    void write(const ros::Time &time, const ros::Duration &period);
 
 };
 

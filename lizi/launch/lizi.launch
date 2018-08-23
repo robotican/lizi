@@ -21,25 +21,15 @@
     <arg name="map" default="map.yaml" doc="pre-saved map path"/>
     <arg name="move_base" default="false"/>
     <arg name="robot_localization" default="false"/>
-    <arg name="teleop" default="false" doc="allow lizi joy teleop"/>
-
-    <!--uncommon settings-->
-    <arg name="joy_dev" default="/dev/input/js0"/>
-    <arg name="joy_profile" default="xbox"/>
     <arg name="twist_mux" default="true"/>
+    
+    <include file="$(find ric_interface_ros)/launch/ric_interface_ros.launch" />
     
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
         
     <include file="$(find lizi_control)/launch/lizi_controllers.launch" />
     
     <include file="$(find espeak_ros)/launch/espeak_ros.launch" />
-    
-    <group if="$(arg teleop)" >
-        <include file="$(find lizi_teleop)/launch/lizi_teleop.launch">
-            <arg name="joy_dev" value="$(arg joy_dev)"/>
-            <arg name="joy_profile" value="$(arg joy_profile)"/>
-        </include>
-    </group>
     
     <group if="$(arg have_map)">
         <node name="map_server" pkg="map_server" type="map_server" args="$(arg map)" />
@@ -117,10 +107,6 @@
             <arg name="y" value="$(arg y)"/>
             <arg name="Y" value="$(arg Y)"/>
 	</include>
-    </group>
-    
-    <group if="$(arg moveit)">
-        <include file="$(find lizi_moveit_config)/launch/move_group.launch" />
     </group>
     
     

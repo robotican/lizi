@@ -6,11 +6,13 @@
 
 struct wheel
 {
-    double pos = 0;
-    double vel = 0;
+    std::string joint_name;
+    double position = 0;
+    double velocity = 0;
     double effort = 0;
     double timestamp = 0;
-    double cmd_vel = 0;
+    double command_velocity = 0;
+    double command_effort = 0;
 };
 
 #endif //LIZI_HW_WHEEL_H

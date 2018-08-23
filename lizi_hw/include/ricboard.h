@@ -19,10 +19,11 @@
 #include <hardware_interface/joint_state_interface.h>
 #include <math.h>
 #include <hardware_interface/joint_command_interface.h>
+#include <std_msgs/String.h>
 #include "wheel.h"
+#include "wheels_control.h"
 
-#define MAX_KEEPALIVE_TIMEOUTS      5
-#define RIC_DEAD_TIMEOUT            1 //secs
+#define RIC_DEAD_TIMEOUT            1.5 //secs
 #define G_FORCE                     9.80665
 #define ENC_TICKS_PER_ROUND         2048 // 512 * 4
 
@@ -67,14 +68,17 @@ private:
     ros::Publisher urf_rear_pub_,
             urf_right_pub_,
             urf_left_pub_;
-    ros::Publisher ric_imu_pub_;
-    ros::Publisher ric_mag_pub_;
-    ros::Publisher ric_servo_pub_;
+    ros::Publisher ric_imu_pub_,
+            ric_mag_pub_,
+            ric_servo_pub_;
+    ros::Publisher espeak_pub_;
 
     ros::Timer ric_pub_timer_,
             keepalive_timer;
 
     ros::NodeHandle *nh_;
+
+    WheelsControl wheels_control_;
 
     /* handles */
     /*std::vector<hardware_interface::JointStateHandle> joint_state_handles_;
@@ -85,6 +89,8 @@ private:
             front_left_wheel_,
             rear_right_wheel_,
             rear_left_wheel_;
+
+    double motor_max_vel_ = 0; // rad/s
 
     void onKeepAliveTimeout(const ros::TimerEvent &event);
 
@@ -102,11 +108,13 @@ public:
     RicBoard(ros::NodeHandle &nh);
 
     void registerHandles(hardware_interface::JointStateInterface &joint_state_interface,
-                         hardware_interface::VelocityJointInterface& vel_joint_interface,
-                         hardware_interface::EffortJointInterface& effort_joint_interface);
+                         hardware_interface::VelocityJointInterface& vel_joint_interface);
 
     // write controllers commands to ricboard
-    void write();
+    void write(const ros::Time &time, const ros::Duration& duration);
+
+    static double map(double value, double in_min, double in_max, double out_min, double out_max);
+    static double rpmToRadPerSec(double rpm);
 };
 
 

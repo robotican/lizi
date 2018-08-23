@@ -20,13 +20,15 @@ int main(int argc, char **argv)
 
     ros::Time last_time = ros::Time::now();
 
+
     while (ros::ok())
     {
+
         ros::Duration duration = ros::Time::now() - last_time;
 
         controller_manager.update(ros::Time::now(), duration);
 
-        lizi_hw.write();
+        lizi_hw.write(ros::Time::now(), duration);
 
         last_time = ros::Time::now();
 
