@@ -26,6 +26,8 @@ public:
 
     void update(const ros::Duration& dt);
 
+    std::vector<wheel*> getWheels() { return wheels_; }
+
 };
 
 

@@ -3,6 +3,10 @@
 <launch>
 
     <rosparam file="$(find lizi_hw)/config/lizi_hw.yaml" command="load"/>
+
+    <include file="$(find ric_interface_ros)/launch/ric_interface_ros.launch" />
+
     <node name="lizi_hw_node" pkg="lizi_hw" type="lizi_hw_node" respawn="false" output="screen" />
+
 
 </launch>

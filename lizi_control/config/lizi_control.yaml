@@ -15,7 +15,7 @@ mobile_base_controller:
   # diff_drive_controller will attempt to read either one or both from the
   # URDF if not specified as a parameter
   wheel_separation : 0.396
-  wheel_radius : 0.1248
+  wheel_radius : 1
   slip_factor: 0.630
 
   # Wheel separation and radius multipliers
@@ -35,7 +35,7 @@ mobile_base_controller:
   linear:
     x:
       has_velocity_limits    : true
-      max_velocity           : 4.0  # m/s
+      max_velocity           : 20.0  # m/s
       min_velocity           : -1.0 # m/s
       has_acceleration_limits: true
       max_acceleration       : 0.7 # m/s^2

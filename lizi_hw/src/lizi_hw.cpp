@@ -15,9 +15,12 @@ LiziHW::LiziHW(ros::NodeHandle &nh) : ric_(nh)
     ROS_INFO("[lizi_hw]: lizi hardware interface is up");
 }
 
-void LiziHW::write(const ros::Time &time, const ros::Duration &period)
+void LiziHW::write(const ros::Time &time, const ros::Duration& duration)
 {
+    ric_.write(time, duration);
+}
 
-    ric_.write(time, period);
-
+void LiziHW::read(const ros::Time &time)
+{
+    ric_.read(time);
 }

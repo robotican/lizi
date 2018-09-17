@@ -49,20 +49,21 @@
   <!-- Use doc_depend for packages you need only for building documentation: -->
   <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <build_export_depend>roscpp</build_export_depend>
-  <exec_depend>roscpp</exec_depend>
 
   <build_depend>ric_interface_ros</build_depend>
-  <build_export_depend>ric_interface_ros</build_export_depend>
-  <exec_depend>ric_interface_ros</exec_depend>
-
+  <build_depend>lpf_ros</build_depend>
+  <build_depend>roscpp</build_depend>
   <build_depend>control_toolbox</build_depend>
+
+  <build_export_depend>ric_interface_ros</build_export_depend>
   <build_export_depend>control_toolbox</build_export_depend>
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>lpf_ros</build_export_depend>
+
+  <exec_depend>ric_interface_ros</exec_depend>
+  <exec_depend>lpf_ros</exec_depend>
+  <exec_depend>roscpp</exec_depend>
   <exec_depend>control_toolbox</exec_depend>
-
-
-
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

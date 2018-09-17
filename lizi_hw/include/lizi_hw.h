@@ -27,7 +27,8 @@ public:
 
     LiziHW(ros::NodeHandle &nh);
 
-    void write(const ros::Time &time, const ros::Duration &period);
+    void write(const ros::Time &time, const ros::Duration& duration);
+    void read(const ros::Time &time);
 
 };
 

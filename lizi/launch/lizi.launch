@@ -22,9 +22,7 @@
     <arg name="move_base" default="false"/>
     <arg name="robot_localization" default="false"/>
     <arg name="twist_mux" default="true"/>
-    
-    <include file="$(find ric_interface_ros)/launch/ric_interface_ros.launch" />
-    
+        
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
         
     <include file="$(find lizi_control)/launch/lizi_controllers.launch" />

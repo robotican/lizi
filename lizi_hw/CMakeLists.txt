@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
         controller_manager
         control_toolbox
         ric_interface_ros
+        lpf_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -139,11 +140,14 @@ include_directories(
          src/lizi_hw.cpp
          src/ricboard.cpp
          src/wheels_control.cpp
+         src/velocities_lpf.cpp
 
          include/ricboard.h
          include/lizi_hw.h
          include/wheel.h
-         include/wheels_control.h)
+         include/wheels_control.h
+         include/velocities_lpf.h
+         )
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the

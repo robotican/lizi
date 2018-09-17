@@ -22,6 +22,7 @@
 #include <std_msgs/String.h>
 #include "wheel.h"
 #include "wheels_control.h"
+#include "velocities_lpf.h"
 
 #define RIC_DEAD_TIMEOUT            1.5 //secs
 #define G_FORCE                     9.80665
@@ -45,11 +46,19 @@
 #define URF_RIGHT_ID                15
 #define URF_LEFT_ID                 16
 
+#define SERVO_FRONT_RIGHT_ID	30
+#define SERVO_FRONT_LEFT_ID		31
+#define SERVO_REAR_RIGHT_ID		32
+#define SERVO_REAR_LEFT_ID		33
+
 #define IMU_ID                      20
 
 #define ACCEL_OFFSET_X              0.23
 #define ACCEL_OFFSET_Y              0.13
 #define ACCEL_OFFSET_Z              0.1
+
+#define SERVO_MAX                   2000
+#define SERVO_MIN                   1000
 
 class RicBoard
 {
@@ -80,10 +89,7 @@ private:
 
     WheelsControl wheels_control_;
 
-    /* handles */
-    /*std::vector<hardware_interface::JointStateHandle> joint_state_handles_;
-    std::vector<hardware_interface::JointHandle> vel_handles_;
-    std::vector<hardware_interface::JointHandle> effort_handles_;*/
+    VelocitiesLpf vels_lpf_;
 
     wheel front_right_wheel_,
             front_left_wheel_,
@@ -91,6 +97,8 @@ private:
             rear_left_wheel_;
 
     double motor_max_vel_ = 0; // rad/s
+
+    ros::Time prev_write_time_, prev_read_time_;
 
     void onKeepAliveTimeout(const ros::TimerEvent &event);
 
@@ -100,7 +108,7 @@ private:
     void onOrientationMsg(const ric_interface_ros::Orientation::ConstPtr& msg);
     void onProximityMsg(const ric_interface_ros::Proximity::ConstPtr& msg);
 
-    static void updateWheelState(wheel &wheel, double new_pos, double new_time);
+    static void updateWheelState(wheel &wheel, double new_pos);
 
 
 public:
@@ -111,7 +119,9 @@ public:
                          hardware_interface::VelocityJointInterface& vel_joint_interface);
 
     // write controllers commands to ricboard
-    void write(const ros::Time &time, const ros::Duration& duration);
+    void write(const ros::Time &now, const ros::Duration& duration);
+
+    void read(const ros::Time &now);
 
     static double map(double value, double in_min, double in_max, double out_min, double out_max);
     static double rpmToRadPerSec(double rpm);

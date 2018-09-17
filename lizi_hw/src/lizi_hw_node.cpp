@@ -26,6 +26,8 @@ int main(int argc, char **argv)
 
         ros::Duration duration = ros::Time::now() - last_time;
 
+        lizi_hw.read(ros::Time::now());
+
         controller_manager.update(ros::Time::now(), duration);
 
         lizi_hw.write(ros::Time::now(), duration);
