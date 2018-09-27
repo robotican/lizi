@@ -26,7 +26,7 @@
 
 #define RIC_DEAD_TIMEOUT            1.5 //secs
 #define G_FORCE                     9.80665
-#define ENC_TICKS_PER_ROUND         2048 // 512 * 4
+#define ENC_TICKS_PER_ROUND         4480 // 64 * 70
 
 #define URF_MIN_RANGE               0.3
 #define URF_MAX_RANGE               3.0
@@ -58,6 +58,7 @@
 #define ACCEL_OFFSET_Z              0.1
 
 #define SERVO_MAX                   2000
+#define SERVO_NEUTRAL               1500
 #define SERVO_MIN                   1000
 
 class RicBoard
@@ -83,7 +84,8 @@ private:
     ros::Publisher espeak_pub_;
 
     ros::Timer ric_pub_timer_,
-            keepalive_timer;
+            keepalive_timer_,
+            vel_delta_timer_;
 
     ros::NodeHandle *nh_;
 
@@ -97,8 +99,10 @@ private:
             rear_left_wheel_;
 
     double motor_max_vel_ = 0; // rad/s
+    double vel_delta_t_ = 0.02; // seconds
+    double ric_servo_bias_ = 0;
 
-    ros::Time prev_write_time_, prev_read_time_;
+    ros::Time prev_write_time_;
 
     void onKeepAliveTimeout(const ros::TimerEvent &event);
 
@@ -108,7 +112,9 @@ private:
     void onOrientationMsg(const ric_interface_ros::Orientation::ConstPtr& msg);
     void onProximityMsg(const ric_interface_ros::Proximity::ConstPtr& msg);
 
-    static void updateWheelState(wheel &wheel, double new_pos);
+    static void updateWheelPosition(wheel &wheel, double new_pos);
+
+    void onVelDeltaTimer(const ros::TimerEvent&);
 
 
 public:

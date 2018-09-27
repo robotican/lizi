@@ -34,15 +34,15 @@ mobile_base_controller:
   # Whenever a min_* is unspecified, default to -max_*
   linear:
     x:
-      has_velocity_limits    : true
-      max_velocity           : 20.0  # m/s
+      has_velocity_limits    : false
+      max_velocity           : 100.0  # m/s
       min_velocity           : -1.0 # m/s
-      has_acceleration_limits: true
+      has_acceleration_limits: false
       max_acceleration       : 0.7 # m/s^2
       min_acceleration       : -0.5 # m/s^2
   angular:
     z:
-      has_velocity_limits    : true
+      has_velocity_limits    : false
       max_velocity           : 3.0  # rad/s
-      has_acceleration_limits: true
+      has_acceleration_limits: false
       max_acceleration       : 1.0  # rad/s^2

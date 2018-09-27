@@ -37,11 +37,11 @@ void WheelsControl::update(const ros::Duration& dt)
     {
         double command = wheels_[i]->command_velocity;
         double velocity = wheels_[i]->velocity;
-        double error = command  - velocity;
-
-        //ROS_INFO("cmd: %f, vel: %f, error: %f, dt: %f", command, velocity, error, dt.toSec());
+        double error = command - velocity;
 
         wheels_[i]->command_effort = pids_[i].computeCommand(error, dt);
+
+        ROS_INFO("cmd: %f, effort: %f, vel: %f, error: %f, dt: %f", command, wheels_[i]->command_effort, velocity, error, dt.toSec());
 
     }
 }

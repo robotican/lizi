@@ -23,19 +23,46 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
     ric_mag_pub_ = nh.advertise<sensor_msgs::MagneticField>("imu/magnetic", 10);
     espeak_pub_ = nh.advertise<std_msgs::String>("/espeak_node/speak_line", 10);
 
-    keepalive_timer = nh.createTimer(ros::Duration(RIC_DEAD_TIMEOUT), &RicBoard::onKeepAliveTimeout, this);
+    keepalive_timer_ = nh.createTimer(ros::Duration(RIC_DEAD_TIMEOUT), &RicBoard::onKeepAliveTimeout, this);
 
     front_right_wheel_.joint_name = WHEEL_FRONT_RIGHT_JOINT;
     front_left_wheel_.joint_name = WHEEL_FRONT_LEFT_JOINT;
     rear_right_wheel_.joint_name = WHEEL_REAR_RIGHT_JOINT;
     rear_left_wheel_.joint_name = WHEEL_REAR_LEFT_JOINT;
 
+    front_right_wheel_.servo_id = SERVO_FRONT_RIGHT_ID;
+    front_left_wheel_.servo_id = SERVO_FRONT_LEFT_ID;
+    rear_right_wheel_.servo_id = SERVO_REAR_RIGHT_ID;
+    rear_left_wheel_.servo_id = SERVO_REAR_LEFT_ID;
+
     if (!nh.getParam("lpf/front_right", front_right_wheel_.vel_lpf_alpha) ||
         !nh.getParam("lpf/front_left", front_left_wheel_.vel_lpf_alpha) ||
         !nh.getParam("lpf/rear_right", rear_right_wheel_.vel_lpf_alpha) ||
-        !nh.getParam("lpf/rear_right", rear_left_wheel_.vel_lpf_alpha))
+        !nh.getParam("lpf/rear_left", rear_left_wheel_.vel_lpf_alpha))
     {
         ROS_ERROR("[lizi_hw/ricboard]: one of the lpf params is missing. "
+                  "check config file. shutting down.");
+        ros::shutdown();
+        exit(EXIT_FAILURE);
+    }
+
+    if (!nh.getParam("reverse_command/front_right", front_right_wheel_.reverse_command) ||
+        !nh.getParam("reverse_command/front_left", front_left_wheel_.reverse_command) ||
+        !nh.getParam("reverse_command/rear_right", rear_right_wheel_.reverse_command) ||
+        !nh.getParam("reverse_command/rear_left", rear_left_wheel_.reverse_command))
+    {
+        ROS_ERROR("[lizi_hw/ricboard]: one of the reverse_command params is missing. "
+                  "check config file. shutting down.");
+        ros::shutdown();
+        exit(EXIT_FAILURE);
+    }
+
+    if (!nh.getParam("reverse_feedback/front_right", front_right_wheel_.reverse_feedback) ||
+        !nh.getParam("reverse_feedback/front_left", front_left_wheel_.reverse_feedback) ||
+        !nh.getParam("reverse_feedback/rear_right", rear_right_wheel_.reverse_feedback) ||
+        !nh.getParam("reverse_feedback/rear_left", rear_left_wheel_.reverse_feedback))
+    {
+        ROS_ERROR("[lizi_hw/ricboard]: one of the reverse_feedback params is missing. "
                   "check config file. shutting down.");
         ros::shutdown();
         exit(EXIT_FAILURE);
@@ -61,7 +88,66 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
     }
     motor_max_vel_ = rpmToRadPerSec(motor_max_rpm);
 
-    prev_write_time_ = ros::Time::now();
+    nh.getParam("ric_servo_bias", ric_servo_bias_);
+
+    nh.getParam("velocity_delta_t", vel_delta_t_);
+
+    vel_delta_timer_ = nh.createTimer(ros::Duration(vel_delta_t_), &RicBoard::onVelDeltaTimer, this);
+}
+
+void RicBoard::onVelDeltaTimer(const ros::TimerEvent &)
+{
+    for (auto &wheel : wheels_control_.getWheels())
+    {
+        double delta_x = wheel->position - wheel->last_position;
+        wheel->velocity = delta_x / vel_delta_t_;
+        wheel->last_position = wheel->position;
+    }
+    vels_lpf_.update();
+
+
+
+
+
+    wheels_control_.update(ros::Duration(vel_delta_t_));
+
+    for (wheel *w : wheels_control_.getWheels())
+    {
+        if (w->reverse_command)
+            w->reverse_command *= -1;
+
+        // map control loop values to servo values
+        double servo_command = map(w->command_effort,
+                                   -motor_max_vel_,
+                                   motor_max_vel_,
+                                   SERVO_MIN,
+                                   SERVO_MAX);
+
+        // add bias if needed
+        if (servo_command > SERVO_NEUTRAL)
+            servo_command += ric_servo_bias_;
+        else if (servo_command < SERVO_NEUTRAL)
+            servo_command -= ric_servo_bias_;
+
+        // sturation
+        if (servo_command > SERVO_MAX)
+            servo_command = SERVO_MAX;
+        else if (servo_command < SERVO_MIN)
+            servo_command = SERVO_MIN;
+
+        ROS_INFO("%s_cmd: %f | vel: %f | ric_cmd: %f",
+                 w->joint_name.c_str(),
+                 w->command_velocity,
+                 w->velocity,
+                 servo_command);
+
+        // send servo commands to ricboard
+        ric_interface_ros::Servo servo_msg;
+
+        servo_msg.id = w->servo_id;
+        servo_msg.value = servo_command;
+        ric_servo_pub_.publish(servo_msg);
+    }
 }
 
 void RicBoard::onKeepAliveTimeout(const ros::TimerEvent &event)
@@ -88,26 +174,28 @@ void RicBoard::onEncoderMsg(const ric_interface_ros::Encoder::ConstPtr& msg)
     switch (encoder_id)
     {
         case ENC_FRONT_RIGHT_ID:
-            updateWheelState(front_right_wheel_, new_pos);
+            updateWheelPosition(front_right_wheel_, new_pos);
             break;
 
         case ENC_FRONT_LEFT_ID:
-            updateWheelState(front_left_wheel_, new_pos);
+            updateWheelPosition(front_left_wheel_, new_pos);
             break;
 
         case ENC_REAR_RIGHT_ID:
-            updateWheelState(rear_right_wheel_, new_pos);
+            updateWheelPosition(rear_right_wheel_, new_pos);
             break;
 
         case ENC_REAR_LEFT_ID:
-            updateWheelState(rear_left_wheel_, new_pos);
+            updateWheelPosition(rear_left_wheel_, new_pos);
             break;
     }
 }
 
-void RicBoard::updateWheelState(wheel &wheel, double new_pos)
+void RicBoard::updateWheelPosition(wheel &wheel, double new_pos)
 {
-    wheel.last_position = wheel.position;
+    if (wheel.reverse_feedback)
+        new_pos *= -1;
+
     wheel.position = new_pos;
 }
 
@@ -199,120 +287,72 @@ void RicBoard::onProximityMsg(const ric_interface_ros::Proximity::ConstPtr& msg)
 void RicBoard::registerHandles(hardware_interface::JointStateInterface &joint_state_interface,
                                hardware_interface::VelocityJointInterface &vel_joint_interface)
 {
-    // joint state registration
-    hardware_interface::JointStateHandle fr_wheel_handle(front_right_wheel_.joint_name,
-                                                      &front_right_wheel_.position,
-                                                      &front_right_wheel_.velocity,
-                                                      &front_right_wheel_.effort);
-    hardware_interface::JointStateHandle fl_wheel_handle(front_left_wheel_.joint_name,
-                                                   &front_left_wheel_.position,
-                                                   &front_left_wheel_.velocity,
-                                                    &front_left_wheel_.effort);
-    hardware_interface::JointStateHandle rr_wheel_handle(rear_right_wheel_.joint_name,
-                                                         &rear_right_wheel_.position,
-                                                         &rear_right_wheel_.velocity,
-                                                         &rear_right_wheel_.effort);
-    hardware_interface::JointStateHandle rl_wheel_handle(rear_left_wheel_.joint_name,
-                                                         &rear_left_wheel_.position,
-                                                         &rear_left_wheel_.velocity,
-                                                         &rear_left_wheel_.effort);
+    for (wheel *w : wheels_control_.getWheels())
+    {
+        hardware_interface::JointStateHandle state_handle(w->joint_name,
+                                                             &w->position,
+                                                             &w->velocity,
+                                                             &w->effort);
+        joint_state_interface.registerHandle(state_handle);
 
-    joint_state_interface.registerHandle(fr_wheel_handle);
-    joint_state_interface.registerHandle(fl_wheel_handle);
-    joint_state_interface.registerHandle(rr_wheel_handle);
-    joint_state_interface.registerHandle(rl_wheel_handle);
-
-    // register command interfaces
-
-    hardware_interface::JointHandle fr_joint_handle(joint_state_interface.getHandle(front_right_wheel_.joint_name),
-                                                    &front_right_wheel_.command_velocity);
-    hardware_interface::JointHandle fl_joint_handle(joint_state_interface.getHandle(front_left_wheel_.joint_name),
-                                                    &front_left_wheel_.command_velocity);
-    hardware_interface::JointHandle rr_joint_handle(joint_state_interface.getHandle(rear_right_wheel_.joint_name),
-                                                    &rear_right_wheel_.command_velocity);
-    hardware_interface::JointHandle rl_joint_handle(joint_state_interface.getHandle(rear_left_wheel_.joint_name),
-                                                    &rear_left_wheel_.command_velocity);
-
-
-    vel_joint_interface.registerHandle(fr_joint_handle);
-    vel_joint_interface.registerHandle(fl_joint_handle);
-    vel_joint_interface.registerHandle(rr_joint_handle);
-    vel_joint_interface.registerHandle(rl_joint_handle);
-
-
+        hardware_interface::JointHandle joint_handle(joint_state_interface.getHandle(w->joint_name),
+                                                        &w->command_velocity);
+        vel_joint_interface.registerHandle(joint_handle);
+    }
 }
 
 void RicBoard::read(const ros::Time &now)
 {
-    double new_time = now.toSec();
 
-    ros::Duration delta_t = now - prev_write_time_;
-
-    for(auto & wheel : wheels_control_.getWheels())
-    {
-        double delta_x = wheel->position - wheel->last_position;
-        wheel->velocity = delta_x / delta_t.toSec();
-    }
 }
 
 void RicBoard::write(const ros::Time &now, const ros::Duration& duration)
 {
     // limit writings to arduino to 50Hz
-    if (now - prev_write_time_ >= ros::Duration(0.02))
-    {
-        wheels_control_.update(duration);
-
-        // map control loop values to servo values
-        double front_right_servo_cmd = map(front_right_wheel_.command_effort,
-                                            -motor_max_vel_,
-                                            motor_max_vel_,
-                                            SERVO_MIN,
-                                            SERVO_MAX);
-
-        double front_left_servo_cmd = map(front_left_wheel_.command_effort,
-                                           -motor_max_vel_,
-                                           motor_max_vel_,
-                                           SERVO_MIN,
-                                           SERVO_MAX);
-
-        double rear_right_servo_cmd = map(rear_right_wheel_.command_effort,
-                                           -motor_max_vel_,
-                                           motor_max_vel_,
-                                           SERVO_MIN,
-                                           SERVO_MAX);
-
-        double rear_left_servo_cmd = map(rear_left_wheel_.command_effort,
-                                           -motor_max_vel_,
-                                           motor_max_vel_,
-                                           SERVO_MIN,
-                                           SERVO_MAX);
+//    if (now - prev_write_time_ >= ros::Duration(0.02))
+//    {
+//        wheels_control_.update(duration);
 //
-//        ROS_INFO("front right vel_cmd: %f | vel: %f | ric_cmd: %f", front_right_wheel_.command_velocity, front_right_wheel_.velocity, front_right_servo_cmd);
-//        ROS_INFO("front left vel_cmd: %f | vel: %f | ric_cmd: %f", front_left_wheel_.command_velocity, front_left_wheel_.velocity, front_left_servo_cmd);
-//        ROS_INFO("rear_right vel_cmd: %f | vel: %f | ric_cmd: %f", rear_right_wheel_.command_velocity, rear_right_wheel_.velocity, rear_right_servo_cmd);
-//        ROS_INFO("rear_left vel_cmd: %f | vel: %f | ric_cmd: %f", rear_left_wheel_.command_velocity, rear_left_wheel_.velocity, rear_left_servo_cmd);
-
-        // send servo commands to ricboard
-        ric_interface_ros::Servo servo_msg;
-
-        servo_msg.id = SERVO_FRONT_RIGHT_ID;
-        servo_msg.value = front_right_servo_cmd;
-        ric_servo_pub_.publish(servo_msg);
-
-        servo_msg.id = SERVO_FRONT_LEFT_ID;
-        servo_msg.value = front_left_servo_cmd;
-        ric_servo_pub_.publish(servo_msg);
-
-        servo_msg.id = SERVO_REAR_LEFT_ID;
-        servo_msg.value = rear_right_servo_cmd;
-        ric_servo_pub_.publish(servo_msg);
-
-        servo_msg.id = SERVO_REAR_LEFT_ID;
-        servo_msg.value = rear_left_servo_cmd;
-        ric_servo_pub_.publish(servo_msg);
-
-        prev_write_time_ = ros::Time::now();
-    }
+//        for (wheel *w : wheels_control_.getWheels())
+//        {
+//            if (w->reverse_command)
+//                w->reverse_command *= -1;
+//
+//            // map control loop values to servo values
+//            double servo_command = map(w->command_effort,
+//                                               -motor_max_vel_,
+//                                               motor_max_vel_,
+//                                               SERVO_MIN,
+//                                               SERVO_MAX);
+//
+//            // add bias if needed
+//            if (servo_command > SERVO_NEUTRAL)
+//                servo_command += ric_servo_bias_;
+//            else if (servo_command < SERVO_NEUTRAL)
+//                servo_command -= ric_servo_bias_;
+//
+//            // sturation
+//            if (servo_command > SERVO_MAX)
+//                servo_command = SERVO_MAX;
+//            else if (servo_command < SERVO_MIN)
+//                servo_command = SERVO_MIN;
+//
+//            ROS_INFO("%s_cmd: %f | vel: %f | ric_cmd: %f",
+//                     w->joint_name.c_str(),
+//                     w->command_velocity,
+//                     w->velocity,
+//                     servo_command);
+//
+//            // send servo commands to ricboard
+//            ric_interface_ros::Servo servo_msg;
+//
+//            servo_msg.id = w->servo_id;
+//            servo_msg.value = servo_command;
+//            ric_servo_pub_.publish(servo_msg);
+//        }
+//
+//        prev_write_time_ = ros::Time::now();
+//    }
 }
 
 double RicBoard::map(double value, double in_min, double in_max, double out_min, double out_max)
