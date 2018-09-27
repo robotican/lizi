@@ -4,7 +4,7 @@ robot_state_controller:
     publish_rate: 50  
 
 mobile_base_controller:
-  type: "diff_drive_with_split_controller/DiffDriveController"
+  type: "diff_drive_slip_controller/DiffDriveController"
   right_wheel: ['rear_right_wheel_joint', 'front_right_wheel_joint']
   left_wheel: ['rear_left_wheel_joint', 'front_left_wheel_joint']
   publish_rate: 50.0               # default: 50
