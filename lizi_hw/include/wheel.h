@@ -11,6 +11,7 @@ struct wheel
     double position = 0;
     double last_position = 0;
     double velocity = 0;
+    double raw_velocity = 0;
     double effort = 0;
     double command_velocity = 0;
     double command_effort = 0;

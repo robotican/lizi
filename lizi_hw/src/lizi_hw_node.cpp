@@ -23,7 +23,6 @@ int main(int argc, char **argv)
 
     while (ros::ok())
     {
-
         ros::Duration duration = ros::Time::now() - last_time;
 
         lizi_hw.read(ros::Time::now());

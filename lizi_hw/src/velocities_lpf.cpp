@@ -37,7 +37,7 @@ void VelocitiesLpf::update()
 {
     for (int i=0; i < filters_.size(); i++)
     {
-        double raw_vel = wheels_[i]->velocity;
+        double raw_vel = wheels_[i]->raw_velocity;
         double filtered_vel = filters_[i].filter(raw_vel);
         wheels_[i]->velocity = filtered_vel;
     }

@@ -20,6 +20,7 @@
 #include <math.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <std_msgs/String.h>
+#include <boost/algorithm/clamp.hpp>
 #include "wheel.h"
 #include "wheels_control.h"
 #include "velocities_lpf.h"
@@ -98,11 +99,9 @@ private:
             rear_right_wheel_,
             rear_left_wheel_;
 
-    double motor_max_vel_ = 0; // rad/s
-    double vel_delta_t_ = 0.02; // seconds
     double ric_servo_bias_ = 0;
 
-    ros::Time prev_write_time_;
+    ros::Time prev_lpf_time_;
 
     void onKeepAliveTimeout(const ros::TimerEvent &event);
 
@@ -114,7 +113,7 @@ private:
 
     static void updateWheelPosition(wheel &wheel, double new_pos);
 
-    void onVelDeltaTimer(const ros::TimerEvent&);
+    void onControlLoopTimer(const ros::TimerEvent &);
 
 
 public:

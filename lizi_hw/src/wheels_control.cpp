@@ -23,10 +23,16 @@ void WheelsControl::init(ros::NodeHandle &nh, std::vector<wheel*> & wheels)
             ros::shutdown();
             exit(EXIT_FAILURE);
         }
-        pids_[i].reset();
+        pids_[i].updateDynamicReconfig( pids_[i].getGains());
+        //pids_[i].reset();
     }
 
     start_time_ = ros::Time::now();
+
+    cmd_pub = nh.advertise<std_msgs::Float64>("/mypid/cmd", 10);
+    err_pub = nh.advertise<std_msgs::Float64>("/mypid/error", 10);
+    output_pub = nh.advertise<std_msgs::Float64>("/mypid/output", 10);
+
 }
 
 void WheelsControl::update(const ros::Duration& dt)
@@ -41,7 +47,28 @@ void WheelsControl::update(const ros::Duration& dt)
 
         wheels_[i]->command_effort = pids_[i].computeCommand(error, dt);
 
-        ROS_INFO("cmd: %f, effort: %f, vel: %f, error: %f, dt: %f", command, wheels_[i]->command_effort, velocity, error, dt.toSec());
+
+        if (wheels_[i]->joint_name == "front_right_wheel_joint")
+        {
+            double pe=0, ie=0, de=0;
+            pids_[i].getCurrentPIDErrors(&pe, &ie, &de);
+            ROS_INFO("cmd: %f, effort: %f, vel: %f, error: %f, dt: %f, pe: %f, ie: %f, de: %f", command, wheels_[i]->command_effort, velocity,
+                     error, dt.toSec(),
+                     pe, ie, de);
+
+            std_msgs::Float64 err_msg;
+            err_msg.data = error;
+            err_pub.publish(err_msg);
+
+            std_msgs::Float64 cmd_msg;
+            cmd_msg.data = command;
+            cmd_pub.publish(cmd_msg);
+
+            std_msgs::Float64 output_msg;
+            err_msg.data = wheels_[i]->command_effort;
+            output_pub.publish(err_msg);
+
+        }
 
     }
 }

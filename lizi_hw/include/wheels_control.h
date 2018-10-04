@@ -6,6 +6,7 @@
 #define LIZI_HW_PID_CONTROL_H
 
 #include <control_toolbox/pid.h>
+#include <std_msgs/Float64.h>
 #include "wheel.h"
 
 // This class takes 4 wheels velocity commands from diff_drive_controller,
@@ -20,6 +21,8 @@ private:
     std::vector<control_toolbox::Pid> pids_;
 
     ros::Time start_time_;
+
+    ros::Publisher err_pub, cmd_pub, output_pub; //TODO: DELETE AFTER TEST
 
 public:
     void init(ros::NodeHandle &nh, std::vector<wheel*> & wheels);
