@@ -1,4 +1,38 @@
+/*******************************************************************************
+* Copyright (c) 2018 RoboTICan
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted (subject to the limitations in the disclaimer
+* below) provided that the following conditions are met:
+*
+*     * Redistributions of source code must retain the above copyright notice,
+*     this list of conditions and the following disclaimer.
+*
+*     * Redistributions in binary form must reproduce the above copyright
+*     notice, this list of conditions and the following disclaimer in the
+*     documentation and/or other materials provided with the distribution.
+*
+*     * Neither the name of the copyright holder nor the names of its
+*     contributors may be used to endorse or promote products derived from this
+*     software without specific prior written permission.
+*
+* NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY
+* THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+* CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+* LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+* PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+* EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+* PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+* BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+* IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*******************************************************************************/
+
 /* Author: Elhay Rauper*/
+
 
 #include "ricboard.h"
 
@@ -78,16 +112,6 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
 
     vels_lpf_.init(nh, wheels);
 
-//    double motor_max_rpm = 0;
-//    if (!nh.getParam("motor_max_rpm", motor_max_rpm))
-//    {
-//        ROS_ERROR("[lizi_hw/ricboard]: motor_max_rpm param is missing. "
-//                  "check config file. shutting down.");
-//        ros::shutdown();
-//        exit(EXIT_FAILURE);
-//    }
-//    motor_max_vel_ = rpmToRadPerSec(motor_max_rpm);
-
     nh.getParam("ric_servo_bias", ric_servo_bias_);
 
     double control_loop_interval = 0.05;
@@ -144,13 +168,11 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
 
         servo_command = boost::algorithm::clamp(servo_command, -500, 500);
 
-
-        //TODO: DELETE AFTER TEST
-        if (w->joint_name == "front_right_wheel_joint")
-        {
-            ROS_INFO("ric_cmd: %f",
-                     servo_command);
-        }
+//        if (w->joint_name == "front_right_wheel_joint")
+//        {
+//            ROS_INFO("ric_cmd: %f",
+//                     servo_command);
+//        }
 
 
         // send servo commands to ricboard
@@ -328,7 +350,3 @@ double RicBoard::map(double value, double in_min, double in_max, double out_min,
     return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-double RicBoard::rpmToRadPerSec(double rpm)
-{
-    return ((2 * M_PI) / 60) * rpm;
-}

@@ -68,7 +68,7 @@
         <param name="robot_description" command="$(find xacro)/xacro '$(find lizi_description)/urdf/lizi.xacro' --inorder" />
         <include file="$(find lizi_hw)/launch/lizi_hw.launch" />
                 
-        <group if="$(arg depth_cam)">
+        <!--<group if="$(arg depth_cam)">
             <include file="$(find intel_d435)/launch/d435.launch" />
         </group>
     
@@ -78,7 +78,7 @@
                 
         <group if="$(arg lidar)">
             <include file="$(find lidar_urg_node)/launch/lidar.launch" />
-        </group>
+        </group>-->
         
     </group>
     
@@ -95,7 +95,7 @@
         <include file="$(find lizi_navigation)/launch/hector_slam.launch" />
     </group>
 
-        <group if="$(arg robot_localization)">
+    <group if="$(arg robot_localization)">
         <include file="$(find lizi_navigation)/launch/robot_localization.launch" />
     </group>
 
