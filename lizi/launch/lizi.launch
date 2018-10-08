@@ -46,7 +46,7 @@
     
     <!--load simulation stuff-->
     <group if="$(arg gazebo)">
-         <env name="GAZEBO_MODEL_PATH" value="$(find lizi_gazebo)/models:$(optenv GAZEBO_MODEL_PATH)"/>
+        <!-- <env name="GAZEBO_MODEL_PATH" value="$(find lizi_gazebo)/models:$(optenv GAZEBO_MODEL_PATH)"/>-->
          <param name="robot_description" command="$(find xacro)/xacro '$(find lizi_description)/urdf/lizi_gazebo.xacro' --inorder 
                 depth_cam:=$(arg depth_cam)
                 rgb_cam:=$(arg rgb_cam)
