@@ -43,6 +43,7 @@
 #include <ric_interface_ros/Proximity.h>
 #include <ric_interface_ros/Servo.h>
 #include <ric_interface_ros/Toggle.h>
+#include <ric_interface_ros/Logger.h>
 #include <ros/ros.h>
 #include <tf/tf.h>
 #include <sensor_msgs/Range.h>
@@ -106,7 +107,8 @@ private:
                     error_sub_,
                     keepalive_sub_,
                     orientation_sub_,
-                    proximity_sub_;
+                    proximity_sub_,
+                    logger_sub_;
 
     ros::Publisher urf_rear_pub_,
             urf_right_pub_,
@@ -142,6 +144,7 @@ private:
     void onKeepaliveMsg(const ric_interface_ros::Keepalive::ConstPtr& msg);
     void onOrientationMsg(const ric_interface_ros::Orientation::ConstPtr& msg);
     void onProximityMsg(const ric_interface_ros::Proximity::ConstPtr& msg);
+    void onLoggerMsg(const ric_interface_ros::Logger::ConstPtr& msg);
 
     static void updateWheelPosition(wheel &wheel, double new_pos);
 

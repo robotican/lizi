@@ -46,6 +46,7 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
     keepalive_sub_ = nh.subscribe("ric/keepalive", 10, &RicBoard::onKeepaliveMsg, this);
     orientation_sub_ = nh.subscribe("ric/orientation", 10, &RicBoard::onOrientationMsg, this);
     proximity_sub_ = nh.subscribe("ric/proximity", 10, &RicBoard::onProximityMsg, this);
+    logger_sub_ = nh.subscribe("ric/logger", 10, &RicBoard::onLoggerMsg, this);
 
     ric_servo_pub_ = nh.advertise<ric_interface_ros::Servo>("ric/servo/cmd", 10);
 
@@ -196,6 +197,22 @@ void RicBoard::onKeepAliveTimeout(const ros::TimerEvent &event)
         ROS_ERROR("[lizi_hw/ricboard_pub]: ricboard disconnected. shutting down...");
         ros::shutdown();
         exit(EXIT_FAILURE);
+    }
+}
+
+void RicBoard::onLoggerMsg(const ric_interface_ros::Logger::ConstPtr& msg)
+{
+    switch(msg->sevirity)
+    {
+        case ric_interface_ros::Logger::INFO:
+            ROS_INFO("message from ricboard: %s", msg->message.c_str());
+            break;
+        case ric_interface_ros::Logger::WARN:
+            ROS_WARN("message from ricboard: %s", msg->message.c_str());
+            break;
+        case ric_interface_ros::Logger::CRITICAL:
+            ROS_ERROR("message from ricboard: %s", msg->message.c_str());
+            break;
     }
 }
 
