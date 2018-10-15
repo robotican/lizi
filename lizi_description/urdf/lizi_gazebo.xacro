@@ -1,8 +1,15 @@
 <?xml version="1.0"?>
+
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lizi" description="Lizi robot">
-    <xacro:include filename="$(find lizi_description)/urdf/lizi.xacro" />
-    <xacro:include filename="$(find mobilican_macros)/camera.xacro" />
     
+    <xacro:include filename="$(find lizi_description)/urdf/lizi.xacro" />
+    <xacro:include filename="$(find mobilican_macros)/macros/depth_cam.xacro" />
+    <xacro:include filename="$(find mobilican_macros)/macros/cam.xacro" />
+    <xacro:include filename="$(find mobilican_macros)/macros/urf.xacro" />
+    <xacro:include filename="$(find mobilican_macros)/macros/lidar.xacro" />
+    <xacro:include filename="$(find mobilican_macros)/macros/gps.xacro" />
+    <xacro:include filename="$(find mobilican_macros)/macros/imu.xacro" />
+
     <xacro:property name="M_PI" value="3.14159265358979" />
     <xacro:property name="URF_FOV" value="${10.0*M_PI/180}" />
     
@@ -11,51 +18,68 @@
     <xacro:arg name="imu" default="false"/>
     <xacro:arg name="gps" default="false"/>
     <xacro:arg name="lidar" default="false"/>
-    <xacro:arg name="rgb_cam" default="false"/>
+    <xacro:arg name="cam" default="false"/>
     <xacro:arg name="depth_cam" default="false"/>
     
-    <!-- cameras  -->
-    <xacro:if value="$(arg rgb_cam)">
-        <xacro:Camera name="rgb_cam" link="rgb_cam_link" image_width="640" image_height="480"
-                      image_format="R8G8B8" clip_near="0.02" clip_far="300" />
-        </xacro:if>
+   
+   <xacro:if value="$(arg cam)">
+        <xacro:Camera name="camera" 
+                      link="cam_link" 
+                      image_width="1280" 
+                      image_height="720" 
+                      image_format="R8G8B8" 
+                      clip_near="0.02" 
+                      clip_far="200"
+                      image_topic="image_raw"
+                      info_topic="info"
+                      update_rate="30"
+                      horizontal_fov="1.064" />
+            
+    </xacro:if>
         
-        <xacro:if value="$(arg depth_cam)">        
-           <xacro:include filename="$(find mobilican_macros)/depth_cam.xacro" />
-           <xacro:softkinetic_gazebo name="softkinetic_rgb" ros_topic="softkinetic"/> 
-        </xacro:if>
+    <xacro:if value="$(arg depth_cam)">
+        
+        <xacro:DepthCam name="depth_cam" 
+                        link="depth_cam_link" 
+                        horizontal_fov="1.592" 
+                        img_width="1280" 
+                        img_height="800" 
+                        img_format="B8G8R8" 
+                        clip_near="0.1" 
+                        clip_far="200" 
+                        update_rate="30.0" 
+                        image_topic="color/image_raw" 
+                        depth_topic="depth/color/image_raw" 
+                        cloud_topic="depth/color/points" 
+                        info_topic="color/camera_info" 
+                        depth_info_topic="depth/camera_info" 
+                        pointcloud_cuttoff="0.2" /> 
+        
+    </xacro:if>
+    
+   
+       
+    <xacro:if value="$(arg urf)">
+        <xacro:urf name="left" link="left_urf_link" topic="URF/left" fov="${10.0*M_PI/180.0}" min="0.2" max="5.0"/>
+        <xacro:urf name="right" link="right_urf_link" topic="URF/right" fov="${10.0*M_PI/180.0}" min="0.2" max="5.0"/>
+        <xacro:urf name="rear" link="rear_urf_link" topic="URF/rear" fov="${10.0*M_PI/180.0}" min="0.2" max="5.0"/>
+    </xacro:if>
         
         
-        
-        <!-- Sonars -->
-        <xacro:if value="$(arg urf)">
-            <xacro:include filename="$(find mobilican_macros)/urf.xacro" />
-            <xacro:urf name="left" link="left_urf_link" topic="URF/left" fov="${10.0*M_PI/180.0}" min="0.2" max="5.0"/>
-            <xacro:urf name="right" link="right_urf_link" topic="URF/right" fov="${10.0*M_PI/180.0}" min="0.2" max="5.0"/>
-            <xacro:urf name="rear" link="rear_urf_link" topic="URF/rear" fov="${10.0*M_PI/180.0}" min="0.2" max="5.0"/>
-        </xacro:if>
-        
-        
-        <!-- hokuyo -->
         <xacro:if value="$(arg lidar)">
-            <xacro:include filename="$(find mobilican_macros)/hokuyo.xacro" />
             <xacro:lidar link="laser_link" topic="scan" samples="720" resolution="1" min_angle="-1.5707" max_angle="1.5707" range_min="0.1" range_max="30.0" range_resolution="0.01" />
         </xacro:if>
         
         
-        <!-- GPS   -->
         <xacro:if value="$(arg gps)">
-            <xacro:include filename="$(find mobilican_macros)/gps.xacro" />
             <xacro:gps link="base_link" hz="5" topic="GPS" lat="31.262218" long="34.80146100" alt="298"/>
         </xacro:if>
         
-        <!-- IMU   -->
         <xacro:if value="$(arg imu)">
-            <xacro:include filename="$(find mobilican_macros)/imu.xacro" />
             <xacro:imu link="base_link" hz="50" topic="IMU" />
         </xacro:if>
             
-            
+    
             
             
             <!-- controller manager and hardware interfaces -->

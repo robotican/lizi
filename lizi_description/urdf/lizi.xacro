@@ -25,7 +25,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/base_link.STL" />
+          filename="package://lizi_description/meshes/base.STL" />
       </geometry>
       <material
         name="">
@@ -39,7 +39,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/base_link.STL" />
+          filename="package://lizi_description/meshes/base.STL" />
       </geometry>
     </collision>
   </link>
@@ -80,7 +80,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/laser_link.STL" />
+          filename="package://lizi_description/meshes/lidar.STL" />
       </geometry>
       <material
         name="">
@@ -94,7 +94,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/laser_link.STL" />
+          filename="package://lizi_description/meshes/lidar.STL" />
       </geometry>
     </collision>
   </link>
@@ -133,7 +133,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/depth_cam_link.STL" />
+          filename="package://lizi_description/meshes/depth_cam.STL" />
       </geometry>
       <material
         name="">
@@ -147,7 +147,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/depth_cam_link.STL" />
+          filename="package://lizi_description/meshes/depth_cam.STL" />
       </geometry>
     </collision>
   </link>
@@ -231,7 +231,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/front_left_wheel_link.STL" />
+          filename="package://lizi_description/meshes/wheel.STL" />
       </geometry>
       <material
         name="">
@@ -245,7 +245,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/front_left_wheel_link.STL" />
+          filename="package://lizi_description/meshes/wheel.STL" />
       </geometry>
     </collision>
   </link>
@@ -284,7 +284,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/rear_left_wheel_link.STL" />
+          filename="package://lizi_description/meshes/wheel.STL" />
       </geometry>
       <material
         name="">
@@ -298,7 +298,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/rear_left_wheel_link.STL" />
+          filename="package://lizi_description/meshes/wheel.STL" />
       </geometry>
     </collision>
   </link>
@@ -337,7 +337,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/front_right_wheel_link.STL" />
+          filename="package://lizi_description/meshes/wheel.STL" />
       </geometry>
       <material
         name="">
@@ -351,7 +351,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/front_right_wheel_link.STL" />
+          filename="package://lizi_description/meshes/wheel.STL" />
       </geometry>
     </collision>
   </link>
@@ -390,7 +390,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/rear_right_wheel_link.STL" />
+          filename="package://lizi_description/meshes/wheel.STL" />
       </geometry>
       <material
         name="">
@@ -404,7 +404,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://lizi_description/meshes/rear_right_wheel_link.STL" />
+          filename="package://lizi_description/meshes/wheel.STL" />
       </geometry>
     </collision>
   </link>
@@ -422,9 +422,9 @@
       xyz="0 0.999999999993684 0" />
   </joint>
   <link
-    name="front_camera_link" />
+    name="cam_link" />
   <joint
-    name="front_camera_joint"
+    name="cam_joint"
     type="fixed">
     <origin
       xyz="0.17275 0.068 0.0202"
@@ -432,7 +432,7 @@
     <parent
       link="base_link" />
     <child
-      link="front_camera_link" />
+      link="cam_link" />
     <axis
       xyz="0 0 0" />
   </joint>

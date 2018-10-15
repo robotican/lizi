@@ -11,7 +11,7 @@
     <arg name="y" default="0.0"/>
     <arg name="z" default="0.0"/>
     <arg name="Y" default="0.0" />
-    <arg name="rgb_cam" default="false"/>
+    <arg name="cam" default="false"/>
     <arg name="depth_cam" default="false"/>
     <arg name="lidar" default="false"/>
     <arg name="gmapping" default="false"/>
@@ -49,7 +49,7 @@
         <!-- <env name="GAZEBO_MODEL_PATH" value="$(find lizi_gazebo)/models:$(optenv GAZEBO_MODEL_PATH)"/>-->
          <param name="robot_description" command="$(find xacro)/xacro '$(find lizi_description)/urdf/lizi_gazebo.xacro' --inorder 
                 depth_cam:=$(arg depth_cam)
-                rgb_cam:=$(arg rgb_cam)
+                cam:=$(arg cam)
                 urf:=true
                 imu:=true
                 gps:=true
