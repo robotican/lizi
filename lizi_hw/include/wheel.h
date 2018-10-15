@@ -39,7 +39,7 @@
 struct wheel
 {
     std::string joint_name;
-    int servo_id = 0;
+    int id = 0;
     double position = 0;
     double last_position = 0;
     double velocity = 0;

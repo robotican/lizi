@@ -65,10 +65,10 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
     rear_right_wheel_.joint_name = WHEEL_REAR_RIGHT_JOINT;
     rear_left_wheel_.joint_name = WHEEL_REAR_LEFT_JOINT;
 
-    front_right_wheel_.servo_id = SERVO_FRONT_RIGHT_ID;
-    front_left_wheel_.servo_id = SERVO_FRONT_LEFT_ID;
-    rear_right_wheel_.servo_id = SERVO_REAR_RIGHT_ID;
-    rear_left_wheel_.servo_id = SERVO_REAR_LEFT_ID;
+    front_right_wheel_.id = WHEEL_FRONT_RIGHT_ID;
+    front_left_wheel_.id = WHEEL_FRONT_LEFT_ID;
+    rear_right_wheel_.id = WHEEL_REAR_RIGHT_ID;
+    rear_left_wheel_.id = WHEEL_REAR_LEFT_ID;
 
     if (!nh.getParam("lpf/front_right", front_right_wheel_.vel_lpf_alpha) ||
         !nh.getParam("lpf/front_left", front_left_wheel_.vel_lpf_alpha) ||
@@ -224,19 +224,19 @@ void RicBoard::onEncoderMsg(const ric_interface_ros::Encoder::ConstPtr& msg)
 
     switch (encoder_id)
     {
-        case ENC_FRONT_RIGHT_ID:
+        case WHEEL_FRONT_RIGHT_ID:
             updateWheelPosition(front_right_wheel_, new_pos);
             break;
 
-        case ENC_FRONT_LEFT_ID:
+        case WHEEL_FRONT_LEFT_ID:
             updateWheelPosition(front_left_wheel_, new_pos);
             break;
 
-        case ENC_REAR_RIGHT_ID:
+        case WHEEL_REAR_RIGHT_ID:
             updateWheelPosition(rear_right_wheel_, new_pos);
             break;
 
-        case ENC_REAR_LEFT_ID:
+        case WHEEL_REAR_LEFT_ID:
             updateWheelPosition(rear_left_wheel_, new_pos);
             break;
     }

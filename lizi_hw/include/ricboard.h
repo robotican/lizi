@@ -71,19 +71,14 @@
 #define WHEEL_REAR_LEFT_JOINT       "rear_left_wheel_joint"
 #define WHEEL_REAR_RIGHT_JOINT      "rear_right_wheel_joint"
 
-#define ENC_FRONT_RIGHT_ID          1
-#define ENC_FRONT_LEFT_ID           2
-#define ENC_REAR_RIGHT_ID           3
-#define ENC_REAR_LEFT_ID            4
+#define WHEEL_FRONT_RIGHT_ID          1
+#define WHEEL_FRONT_LEFT_ID           2
+#define WHEEL_REAR_RIGHT_ID           3
+#define WHEEL_REAR_LEFT_ID            4
 
 #define URF_REAR_ID                 14
 #define URF_RIGHT_ID                15
 #define URF_LEFT_ID                 16
-
-#define SERVO_FRONT_RIGHT_ID	30
-#define SERVO_FRONT_LEFT_ID		31
-#define SERVO_REAR_RIGHT_ID		32
-#define SERVO_REAR_LEFT_ID		33
 
 #define IMU_ID                      20
 
