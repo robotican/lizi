@@ -41,8 +41,9 @@
         
         <xacro:DepthCam name="depth_cam" 
                         link="depth_cam_link" 
+                        optical_frame="camera_depth_optical_frame"
                         horizontal_fov="1.592" 
-                        img_width="1280" 
+                        img_width="1280"
                         img_height="800" 
                         img_format="B8G8R8" 
                         clip_near="0.1" 

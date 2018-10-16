@@ -2,7 +2,12 @@
 
 
 <robot
-  name="lizi">
+  xmlns:xacro="http://www.ros.org/wiki/xacro" name="lizi">
+    
+  <xacro:property name="M_PI" value="3.14159265358979" />
+
+  
+    
   <link
     name="base_link">
     <inertial>
@@ -44,17 +49,17 @@
     </collision>
   </link>
   <link
-    name="footprint_link" />
+    name="base_footprint" />
   <joint
-    name="footprint_joint"
+    name="base_footprint_joint"
     type="fixed">
     <origin
       xyz="0 0 -0.0762"
       rpy="0 0 0" />
     <parent
-      link="base_link" />
+      link="base_footprint" />
     <child
-      link="footprint_link" />
+      link="base_link" />
     <axis
       xyz="0 0 0" />
   </joint>
@@ -436,4 +441,65 @@
     <axis
       xyz="0 0 0" />
   </joint>
+  
+      <!-- camera depth joints and links -->
+    <joint name="camera_depth_joint" type="fixed">
+      <origin xyz="0 -0.0122 0" rpy="0 0 0"/>
+      <parent link="depth_cam_link"/>
+      <child link="camera_depth_frame" />
+    </joint>
+    <link name="camera_depth_frame"/>
+
+    <joint name="camera_depth_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="camera_depth_frame" />
+      <child link="camera_depth_optical_frame" />
+    </joint>
+    <link name="camera_depth_optical_frame"/>
+      
+    <!-- camera left IR joints and links -->
+    <joint name="camera_left_ir_joint" type="fixed">
+      <origin xyz="0 -0.0322 0" rpy="0 0 0" />
+      <parent link="depth_cam_link" />
+      <child link="camera_left_ir_frame" />
+    </joint>
+    <link name="camera_left_ir_frame"/>
+
+    <joint name="camera_left_ir_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="camera_left_ir_frame" />
+      <child link="camera_left_ir_optical_frame" />
+    </joint>
+    <link name="camera_left_ir_optical_frame"/>
+
+    <!-- camera right IR joints and links -->
+    <joint name="camera_right_ir_joint" type="fixed">
+      <origin xyz="0 0.0178 0" rpy="0 0 0" />
+      <parent link="depth_cam_link" />
+      <child link="camera_right_ir_frame" />
+    </joint>
+    <link name="camera_right_ir_frame"/>
+
+    <joint name="camera_right_ir_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="camera_right_ir_frame" />
+      <child link="camera_right_ir_optical_frame" />
+    </joint>
+    <link name="camera_right_ir_optical_frame"/>
+
+    <!-- camera fisheye joints and links -->
+    <joint name="camera_fisheye_joint" type="fixed">
+      <origin xyz="0 0.0322 0" rpy="0 0 0" />
+      <parent link="depth_cam_link" />
+      <child link="camera_fisheye_frame" />
+    </joint>
+    <link name="camera_fisheye_frame"/>
+
+    <joint name="camera_fisheye_optical_joint" type="fixed">
+      <origin xyz="0 0 0" rpy="${-M_PI/2} 0 ${-M_PI/2}" />
+      <parent link="camera_fisheye_frame" />
+      <child link="camera_fisheye_optical_frame" />
+    </joint>
+    <link name="camera_fisheye_optical_frame"/>
+    
 </robot>
