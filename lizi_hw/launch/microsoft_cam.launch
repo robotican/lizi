@@ -1,3 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
 <launch>
   <node name="usb_cam_node" pkg="usb_cam" type="usb_cam_node" output="screen" >
     <param name="video_device" value="/dev/video3" />
