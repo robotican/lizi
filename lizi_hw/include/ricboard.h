@@ -159,7 +159,7 @@ public:
     void read(const ros::Time &now);
 
     static double map(double value, double in_min, double in_max, double out_min, double out_max);
-    static double rpmToRadPerSec(double rpm);
+    static double ticksToRads(double rpm);
 };
 
 

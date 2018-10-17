@@ -131,19 +131,15 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
     {
         double delta_x = wheel->position - wheel->last_position;
 
+//        if (wheel->joint_name == "front_right_wheel_joint")
+//        {
+//            ROS_INFO("delta: %f",
+//                     delta_x);
+//        }
+
         wheel->last_position = wheel->position;
 
-        if (wheel->joint_name == "front_right_wheel_joint")
-        {
-            if (delta_x == 0)
-                ROS_ERROR("delta_x: %.3f", delta_x);
-            else
-                ROS_WARN("delta_x: %.3f", delta_x);
-
-        }
-
-
-        wheel->raw_velocity = delta_x / delta_t.toSec();
+        wheel->raw_velocity = ticksToRads(delta_x) / delta_t.toSec();
         wheel->last_position = wheel->position;
     }
     vels_lpf_.update();
@@ -179,7 +175,7 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
         // send servo commands to ricboard
         ric_interface_ros::Servo servo_msg;
 
-        servo_msg.id = w->servo_id;
+        servo_msg.id = w->id;
         servo_msg.value = servo_command + 1500;
         ric_servo_pub_.publish(servo_msg);
     }
@@ -367,3 +363,7 @@ double RicBoard::map(double value, double in_min, double in_max, double out_min,
     return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
+double RicBoard::ticksToRads(double ticks)
+{
+    return (ticks / ENC_TICKS_PER_ROUND) * 2 * M_PI;
+}

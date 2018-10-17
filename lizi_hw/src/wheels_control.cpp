@@ -84,9 +84,9 @@ void WheelsControl::update(const ros::Duration& dt)
         {
             double pe=0, ie=0, de=0;
             pids_[i].getCurrentPIDErrors(&pe, &ie, &de);
-            ROS_INFO("cmd: %f, effort: %f, vel: %f, error: %f, dt: %f, pe: %f, ie: %f, de: %f", command, wheels_[i]->command_effort, velocity,
-                     error, dt.toSec(),
-                     pe, ie, de);
+//            ROS_INFO("cmd: %f, effort: %f, vel: %f, error: %f, dt: %f, pe: %f, ie: %f, de: %f", command, wheels_[i]->command_effort, velocity,
+//                     error, dt.toSec(),
+//                     pe, ie, de);
 
             std_msgs::Float64 err_msg;
             err_msg.data = error;

@@ -1,13 +1,13 @@
 # wheels control loop PID
-front_right_wheel_joint: {p: 70.0, i: 30.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
-front_left_wheel_joint: {p: 1.0, i: 0.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
-rear_right_wheel_joint: {p: 1.0, i: 0.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
-rear_left_wheel_joint: {p: 1.0, i: 0.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
+front_right_wheel_joint: {p: 70.0, i: 0.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
+front_left_wheel_joint: {p: 70.0, i: 0.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
+rear_right_wheel_joint: {p: 70.0, i: 0.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
+rear_left_wheel_joint: {p: 70.0, i: 0.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
 
 lpf: {front_right: 0.01, front_left: 0.01, rear_right: 0.01, rear_left: 0.01}
 
-reverse_command: {front_right: false, front_left: false, rear_right: false, rear_left: false}
-reverse_feedback: {front_right: true, front_left: true, rear_right: true, rear_left: true}
+reverse_command: {front_right: false, front_left: false, rear_right: true, rear_left: true}
+reverse_feedback: {front_right: false, front_left: false, rear_right: false, rear_left: false}
 
 # delta t for velocity deriative calculation (seconds)
 control_loop_interval: 0.02
