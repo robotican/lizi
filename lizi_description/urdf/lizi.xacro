@@ -117,7 +117,7 @@
       xyz="0 0 0" />
   </joint>
   <link
-    name="depth_cam_link">
+    name="camera_link">
     <inertial>
       <origin
         xyz="-0.0131032740950953 0.000595431416784195 -0.000126402566328898"
@@ -165,7 +165,7 @@
     <parent
       link="base_link" />
     <child
-      link="depth_cam_link" />
+      link="camera_link" />
     <axis
       xyz="0 0 0" />
   </joint>
@@ -427,7 +427,7 @@
       xyz="0 0.999999999993684 0" />
   </joint>
   <link
-    name="cam_link" />
+    name="rgb_cam_link" />
   <joint
     name="cam_joint"
     type="fixed">
@@ -437,7 +437,7 @@
     <parent
       link="base_link" />
     <child
-      link="cam_link" />
+      link="rgb_cam_link" />
     <axis
       xyz="0 0 0" />
   </joint>
@@ -445,7 +445,7 @@
       <!-- camera depth joints and links -->
     <joint name="camera_depth_joint" type="fixed">
       <origin xyz="0 -0.0122 0" rpy="0 0 0"/>
-      <parent link="depth_cam_link"/>
+      <parent link="camera_link"/>
       <child link="camera_depth_frame" />
     </joint>
     <link name="camera_depth_frame"/>
@@ -460,7 +460,7 @@
     <!-- camera left IR joints and links -->
     <joint name="camera_left_ir_joint" type="fixed">
       <origin xyz="0 -0.0322 0" rpy="0 0 0" />
-      <parent link="depth_cam_link" />
+      <parent link="camera_link" />
       <child link="camera_left_ir_frame" />
     </joint>
     <link name="camera_left_ir_frame"/>
@@ -475,7 +475,7 @@
     <!-- camera right IR joints and links -->
     <joint name="camera_right_ir_joint" type="fixed">
       <origin xyz="0 0.0178 0" rpy="0 0 0" />
-      <parent link="depth_cam_link" />
+      <parent link="camera_link" />
       <child link="camera_right_ir_frame" />
     </joint>
     <link name="camera_right_ir_frame"/>
@@ -490,7 +490,7 @@
     <!-- camera fisheye joints and links -->
     <joint name="camera_fisheye_joint" type="fixed">
       <origin xyz="0 0.0322 0" rpy="0 0 0" />
-      <parent link="depth_cam_link" />
+      <parent link="camera_link" />
       <child link="camera_fisheye_frame" />
     </joint>
     <link name="camera_fisheye_frame"/>

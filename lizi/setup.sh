@@ -117,6 +117,7 @@ if [ "$INSTALL_HW_COMPS" = true ] ; then
     sudo cp $CATKIN_WS/src/lizi/rules/49-teensy.rules /etc/udev/rules.d
     sudo cp $CATKIN_WS/src/lizi/rules/hokuyo.rules /etc/udev/rules.d/
     sudo cp $CATKIN_WS/src/lizi/rules/99-realsense-libusb.rules /etc/udev/rules.d
+    sudo cp $CATKIN_WS/src/lizi/rules/microsoft_webcam.rules /etc/udev/rules.d/
     sudo udevadm control --reload-rules && udevadm trigger
     printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
     

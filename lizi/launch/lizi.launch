@@ -72,16 +72,16 @@
         <param name="robot_description" command="$(find xacro)/xacro '$(find lizi_description)/urdf/lizi.xacro' --inorder" />
         <include file="$(find lizi_hw)/launch/lizi_hw.launch" />
                 
-        <!--<group if="$(arg depth_cam)">
-            <include file="$(find intel_d435)/launch/d435.launch" />
+        <group if="$(arg depth_cam)">
+            <include file="$(find lizi_hw)/launch/d435_cam.launch" />
         </group>
     
-        <group if="$(arg rgb_cam)">
-            <include file="$(find usb_cams)/launch/front_cam.launch" />
+        <group if="$(arg cam)">
+            <include file="$(find lizi_hw)/launch/microsoft_cam.launch" />
         </group>
                 
         <group if="$(arg lidar)">
-            <include file="$(find lidar_urg_node)/launch/lidar.launch" />
+            <include file="$(find lizi_hw)/launch/hokuyu_lidar.launch" />
         </group>-->
         
     </group>
