@@ -47,15 +47,18 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
     orientation_sub_ = nh.subscribe("ric/orientation", 10, &RicBoard::onOrientationMsg, this);
     proximity_sub_ = nh.subscribe("ric/proximity", 10, &RicBoard::onProximityMsg, this);
     logger_sub_ = nh.subscribe("ric/logger", 10, &RicBoard::onLoggerMsg, this);
-
+    battery_sub_ = nh.subscribe("ric/battery", 10, &RicBoard::onBatteryMsg, this);
+    location_sub_ = nh.subscribe("ric/location", 10, &RicBoard::onLocationMsg, this);
     ric_servo_pub_ = nh.advertise<ric_interface_ros::Servo>("ric/servo/cmd", 10);
 
     /* ros publishers */
-    urf_rear_pub_ = nh.advertise<sensor_msgs::Range>("urf/front", 10);
+    urf_rear_pub_ = nh.advertise<sensor_msgs::Range>("urf/rear", 10);
     urf_right_pub_ = nh.advertise<sensor_msgs::Range>("urf/right", 10);
     urf_left_pub_ = nh.advertise<sensor_msgs::Range>("urf/left", 10);
-    ric_imu_pub_ = nh.advertise<sensor_msgs::Imu>("imu/data", 10);
-    ric_mag_pub_ = nh.advertise<sensor_msgs::MagneticField>("imu/magnetic", 10);
+    imu_pub_ = nh.advertise<sensor_msgs::Imu>("imu/data", 10);
+    mag_pub_ = nh.advertise<sensor_msgs::MagneticField>("imu/magnetic", 10);
+    gps_pub_ = nh.advertise<sensor_msgs::NavSatFix>("gps", 10);
+    battery_pub_ = nh.advertise<sensor_msgs::BatteryState>("battery", 10);
     espeak_pub_ = nh.advertise<std_msgs::String>("/espeak_node/speak_line", 10);
 
     keepalive_timer_ = nh.createTimer(ros::Duration(RIC_DEAD_TIMEOUT), &RicBoard::onKeepAliveTimeout, this);
@@ -187,13 +190,40 @@ void RicBoard::onKeepAliveTimeout(const ros::TimerEvent &event)
         got_keepalive_ = false;
     else
     {
-        std_msgs::String str_msg;
-        str_msg.data = "RIK BOARD DISCONNECTED. SHUTTING DOWN";
-        espeak_pub_.publish(str_msg);
+        speakMsg("rikboard disconnected. shutting down");
         ROS_ERROR("[lizi_hw/ricboard_pub]: ricboard disconnected. shutting down...");
         ros::shutdown();
         exit(EXIT_FAILURE);
     }
+}
+
+void RicBoard::onLocationMsg(const ric_interface_ros::Location::ConstPtr &msg)
+{
+    sensor_msgs::NavSatFix gps_msg;
+    gps_msg.header.frame_id = "base_link";
+    gps_msg.latitude = msg->lat;
+    gps_msg.longitude = msg->lon;
+    gps_msg.altitude = msg->alt;
+    gps_msg.status.service = sensor_msgs::NavSatStatus::SERVICE_GPS;
+    // if message arrived from ric, it must have valid fix
+    gps_msg.status.status = sensor_msgs::NavSatStatus::STATUS_FIX;
+
+    gps_pub_.publish(gps_msg);
+}
+
+void RicBoard::onBatteryMsg(const ric_interface_ros::Battery::ConstPtr &msg)
+{
+    sensor_msgs::BatteryState batt_msg;
+    batt_msg.header.frame_id = "base_link";
+    batt_msg.voltage = msg->value;
+    batt_msg.capacity = 11.1;
+    batt_msg.percentage = ((msg->value - BATT_MIN)  / (BATT_MAX - BATT_MIN)) * 100.0;
+    batt_msg.power_supply_technology = sensor_msgs::BatteryState::POWER_SUPPLY_TECHNOLOGY_LION;
+    batt_msg.location = "bottom of the robot";
+    for (int i=0; i<BATT_CELLS; i++)
+        batt_msg.cell_voltage.push_back(msg->value / BATT_CELLS);
+
+    battery_pub_.publish(batt_msg);
 }
 
 void RicBoard::onLoggerMsg(const ric_interface_ros::Logger::ConstPtr& msg)
@@ -238,6 +268,13 @@ void RicBoard::onEncoderMsg(const ric_interface_ros::Encoder::ConstPtr& msg)
     }
 }
 
+void RicBoard::speakMsg(const std::string &msg)
+{
+    std_msgs::String str_msg;
+    str_msg.data = msg;
+    espeak_pub_.publish(str_msg);
+}
+
 void RicBoard::updateWheelPosition(wheel &wheel, double new_pos)
 {
     if (wheel.reverse_feedback)
@@ -248,12 +285,20 @@ void RicBoard::updateWheelPosition(wheel &wheel, double new_pos)
 
 void RicBoard::onErrorMsg(const ric_interface_ros::Error::ConstPtr& msg)
 {
-    ROS_WARN("[lizi_hw/ricboard]: component of type %i and id %i reported an error code %i",
+    ROS_WARN("component of type %i and id %i reported an error code %i",
              msg->comp_type, msg->comp_id, msg->code);
 }
 
 void RicBoard::onKeepaliveMsg(const ric_interface_ros::Keepalive::ConstPtr& msg)
 {
+    // first keepalive indicate if hardware test failed
+    if (first_keepalive_)
+    {
+        if (msg->id == 2) ROS_ERROR("hardware test failed");
+        else ROS_INFO("hardware test ok");
+
+        first_keepalive_ = false;
+    }
     got_keepalive_ = true;
     keepalive_timeouts_ = 0;
 }
@@ -289,7 +334,7 @@ void RicBoard::onOrientationMsg(const ric_interface_ros::Orientation::ConstPtr& 
     imu_msg.linear_acceleration.x = msg->accl_x * G_FORCE + ACCEL_OFFSET_X;
     imu_msg.linear_acceleration.y = msg->accl_y * G_FORCE - ACCEL_OFFSET_Y;
     imu_msg.linear_acceleration.z = msg->accl_z * G_FORCE - ACCEL_OFFSET_Z;
-    ric_imu_pub_.publish(imu_msg);
+    imu_pub_.publish(imu_msg);
 
     sensor_msgs::MagneticField mag_msg;
     mag_msg.header.stamp = ros::Time::now();
@@ -297,7 +342,7 @@ void RicBoard::onOrientationMsg(const ric_interface_ros::Orientation::ConstPtr& 
     mag_msg.magnetic_field.x = msg->mag_x;
     mag_msg.magnetic_field.y = msg->mag_y;
     mag_msg.magnetic_field.z = msg->mag_z;
-    ric_mag_pub_.publish(mag_msg);
+    mag_pub_.publish(mag_msg);
 }
 
 void RicBoard::onProximityMsg(const ric_interface_ros::Proximity::ConstPtr& msg)
@@ -315,17 +360,17 @@ void RicBoard::onProximityMsg(const ric_interface_ros::Proximity::ConstPtr& msg)
     switch (urf_id)
     {
         case URF_REAR_ID:
-            range_msg.header.frame_id = "urf_rear_link";
+            range_msg.header.frame_id = "rear_urf_link";
             urf_rear_pub_.publish(range_msg);
             break;
 
         case URF_RIGHT_ID:
-            range_msg.header.frame_id = "urf_right_link";
+            range_msg.header.frame_id = "right_urf_link";
             urf_right_pub_.publish(range_msg);
             break;
 
         case URF_LEFT_ID:
-            range_msg.header.frame_id = "urf_left_link";
+            range_msg.header.frame_id = "left_urf_link";
             urf_left_pub_.publish(range_msg);
             break;
     }

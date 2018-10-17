@@ -44,11 +44,16 @@
 #include <ric_interface_ros/Servo.h>
 #include <ric_interface_ros/Toggle.h>
 #include <ric_interface_ros/Logger.h>
+#include <ric_interface_ros/Location.h>
+#include <ric_interface_ros/Battery.h>
 #include <ros/ros.h>
 #include <tf/tf.h>
 #include <sensor_msgs/Range.h>
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/MagneticField.h>
+#include <sensor_msgs/NavSatFix.h>
+#include <sensor_msgs/NavSatStatus.h>
+#include <sensor_msgs/BatteryState.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <math.h>
 #include <hardware_interface/joint_command_interface.h>
@@ -76,9 +81,9 @@
 #define WHEEL_REAR_RIGHT_ID           3
 #define WHEEL_REAR_LEFT_ID            4
 
-#define URF_REAR_ID                 14
-#define URF_RIGHT_ID                15
-#define URF_LEFT_ID                 16
+#define URF_REAR_ID                 10
+#define URF_RIGHT_ID                11
+#define URF_LEFT_ID                 12
 
 #define IMU_ID                      20
 
@@ -86,9 +91,9 @@
 #define ACCEL_OFFSET_Y              0.13
 #define ACCEL_OFFSET_Z              0.1
 
-#define SERVO_MAX                   2000
-#define SERVO_NEUTRAL               1500
-#define SERVO_MIN                   1000
+#define BATT_MAX                   16.8
+#define BATT_MIN                   13.5
+#define BATT_CELLS                 4
 
 class RicBoard
 {
@@ -97,20 +102,25 @@ private:
 
     int keepalive_timeouts_ = 0;
     bool got_keepalive_ = false;
+    bool first_keepalive_ = true;
 
     ros::Subscriber encoder_sub_,
                     error_sub_,
                     keepalive_sub_,
                     orientation_sub_,
                     proximity_sub_,
-                    logger_sub_;
+                    logger_sub_,
+                    location_sub_,
+                    battery_sub_;
 
     ros::Publisher urf_rear_pub_,
             urf_right_pub_,
             urf_left_pub_;
-    ros::Publisher ric_imu_pub_,
-            ric_mag_pub_,
-            ric_servo_pub_;
+    ros::Publisher imu_pub_,
+            mag_pub_,
+            ric_servo_pub_,
+            gps_pub_,
+            battery_pub_;
     ros::Publisher espeak_pub_;
 
     ros::Timer ric_pub_timer_,
@@ -140,6 +150,8 @@ private:
     void onOrientationMsg(const ric_interface_ros::Orientation::ConstPtr& msg);
     void onProximityMsg(const ric_interface_ros::Proximity::ConstPtr& msg);
     void onLoggerMsg(const ric_interface_ros::Logger::ConstPtr& msg);
+    void onLocationMsg(const ric_interface_ros::Location::ConstPtr& msg);
+    void onBatteryMsg(const ric_interface_ros::Battery::ConstPtr& msg);
 
     static void updateWheelPosition(wheel &wheel, double new_pos);
 
@@ -160,6 +172,8 @@ public:
 
     static double map(double value, double in_min, double in_max, double out_min, double out_max);
     static double ticksToRads(double rpm);
+
+    void speakMsg(const std::string& msg);
 };
 
 
