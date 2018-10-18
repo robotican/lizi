@@ -21,7 +21,6 @@
     <arg name="map" default="map.yaml" doc="pre-saved map path"/>
     <arg name="move_base" default="false"/>
     <arg name="robot_localization" default="false"/>
-    <arg name="twist_mux" default="true"/>
         
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
     
@@ -84,10 +83,6 @@
             <include file="$(find lizi_hw)/launch/hokuyu_lidar.launch" />
         </group>-->
         
-    </group>
-    
-    <group if="$(arg twist_mux)">
-        <include file="$(find ros_twist_mux)/launch/twist_mux.launch" />
     </group>
     
    

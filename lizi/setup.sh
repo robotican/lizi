@@ -22,7 +22,10 @@ else
 fi
 
 CATKIN_WS_SRC=$( cd "$(dirname "$0")" && cd ../.. && pwd )
+
 printf "${WHITE_TXT}\nAssuming catkin workspace src folder path is: '$CATKIN_WS_SRC'\n${NO_COLOR}"
+
+cd $CATKIN_WS_SRC
 
 printf "${WHITE_TXT}\nInstalling 3rd party packages...\n${NO_COLOR}"
 # third party packages #
@@ -43,7 +46,6 @@ sudo apt-get -y install ros-kinetic-move-base
 sudo apt-get -y install ros-kinetic-navigation
 sudo apt-get -y install ros-kinetic-hector-slam
 sudo apt-get -y install ros-kinetic-gmapping
-sudo apt-get -y install ros-kinetic-twist-mux
 sudo apt-get -y install ros-kinetic-pid
 sudo apt-get -y install ros-kinetic-ar-track-alvar
 sudo apt-get -y install ros-kinetic-serial
@@ -55,17 +57,22 @@ sudo apt-get -y install espeak espeak-data libespeak-dev
 wget https://github.com/robotican/diff_drive_slip_controller/archive/V1.0.0.tar.gz
 tar -xvzf V1.0.0.tar.gz
 rm V1.0.0.tar.gz
-wget https://github.com/robotican/ric_interface_ros/archive/V1.0.0.tar.gz
-tar -xvzf V1.0.0.tar.gz
-rm V1.0.0.tar.gz
+wget https://github.com/robotican/ric_interface_ros/archive/V1.0.1.tar.gz
+tar -xvzf V1.0.1.tar.gz
+rm V1.0.1.tar.gz
 wget https://github.com/robotican/mobilican_macros/archive/V1.0.0.tar.gz
 tar -xvzf V1.0.0.tar.gz
 rm V1.0.0.tar.gz
 wget https://github.com/elhayra/lpf_ros/archive/V1.0.0.tar.gz
 tar -xvzf V1.0.0.tar.gz
 rm V1.0.0.tar.gz
-
-sudo dpkg -i lizi/lizi/ric_driver/ric-interface.deb
+wget https://github.com/robotican/espeak_ros/archive/V1.0.1.tar.gz
+tar -xvzf V1.0.1.tar.gz
+rm V1.0.1.tar.gz
+wget https://github.com/robotican/mobilican_rules/archive/V1.0.0.tar.gz
+tar -xvzf V1.0.0.tar.gz
+rm V1.0.0.tar.gz
+sudo dpkg -i $CATKIN_WS_SRC/lizi/lizi/ric_driver/ric-interface.deb
 
 sudo apt-get -y install ros-kinetic-hector-gazebo-plugins
 
@@ -90,14 +97,14 @@ printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 # usb rules #
 printf "${WHITE_TXT}\nInstalling USB rules...\n${NO_COLOR}"
 sudo apt -y install setserial #for setting port latency
-sudo cp $CATKIN_WS_SRC/lizi/rules/* /etc/udev/rules.d
+sudo cp $CATKIN_WS_SRC/mobilican_rules/rules/* /etc/udev/rules.d
 sudo udevadm control --reload-rules && udevadm trigger
 printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
     
 
 # compiling lizi #
 printf "${WHITE_TXT}Compiling lizi package...\n${NO_COLOR}"
-cd $CATKIN_WS_SRC
+cd $CATKIN_WS_SRC/..
 catkin_make -DCMAKE_BUILD_TYPE="Release"
 printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 
