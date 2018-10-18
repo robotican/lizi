@@ -107,7 +107,7 @@ printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 
 # compiling lizi #
 printf "${WHITE_TXT}Compiling lizi package...\n${NO_COLOR}"
-cd ~/catkin_ws
+cd ~/$CATKIN_WS
 catkin_make -DCMAKE_BUILD_TYPE="Release"
 printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 
