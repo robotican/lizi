@@ -74,6 +74,8 @@ wget https://github.com/elhayra/lpf_ros/archive/V1.0.0.tar.gz
 tar -xvzf V1.0.0.tar.gz
 rm V1.0.0.tar.gz
 
+sudo dpkg -i lizi/lizi/ric_driver/ric-interface.deb
+
 sudo apt-get -y install ros-kinetic-hector-gazebo-plugins
 
 printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
