@@ -12,25 +12,6 @@ INSTALL_HW_COMPS=false
 
 printf "${WHITE_TXT}\n***Installing Lizi ROS-Kinetic Package***\n${NO_COLOR}"
 
-# check for hardware argument, and determine installation type #
-if [ $# -eq 0 ]
-then
-    printf "${WHITE_TXT}\nNo arguments supplied, installing package for standalone PC... ${NO_COLOR}\n"
-elif [ $# -eq 1 ]
-then  
-    if [ $1 = "hw" ]
-    then
-        printf "${WHITE_TXT}\nGot hardware argument. Installing package for Lizi hardware... ${NO_COLOR}\n"
-        INSTALL_HW_COMPS=true
-    else
-        printf "${RED_TXT}\nInvalid argument. Use 'hw' argument to install this package for Lizi hardware, or use no arguments to install this package for a standalone PC ${NO_COLOR}\n"
-        exit 1
-    fi
-else
-    printf "${RED_TXT}\nToo many arguments. Only one argument named hw is allowed ${NO_COLOR}\n"
-    exit 1
-fi
-
 # validate ros version #
 printf "${WHITE_TXT}\nChecking ROS Version...\n${NO_COLOR}"
 
@@ -81,48 +62,46 @@ sudo apt-get -y install espeak espeak-data libespeak-dev
 
 cd ~/$CATKIN_WS/src
 wget https://github.com/robotican/diff_drive_slip_controller/archive/V1.0.0.tar.gz
-tar -xvzf 2.0.3.tar.gz
-rm 2.0.3.tar.gz     
+tar -xvzf V1.0.0.tar.gz
+rm V1.0.0.tar.gz
+wget https://github.com/robotican/ric_interface_ros/archive/V1.0.0.tar.gz
+tar -xvzf V1.0.0.tar.gz
+rm V1.0.0.tar.gz
+wget https://github.com/robotican/mobilican_macros/archive/V1.0.0.tar.gz
+tar -xvzf V1.0.0.tar.gz
+rm V1.0.0.tar.gz
+wget https://github.com/elhayra/lpf_ros/archive/V1.0.0.tar.gz
+tar -xvzf V1.0.0.tar.gz
+rm V1.0.0.tar.gz
 
-if [ "$INSTALL_HW_COMPS" = false ] ; then
-
-    sudo apt-get -y install ros-kinetic-hector-gazebo-plugins
-    
-fi
+sudo apt-get -y install ros-kinetic-hector-gazebo-plugins
 
 printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 
-if [ "$INSTALL_HW_COMPS" = true ] ; then
-    
-    # realsense depth camera 
-    printf "${WHITE_TXT}\nInstalling depth camera...\n${NO_COLOR}"
-    cd ~/$CATKIN_WS/src
-    wget https://github.com/intel-ros/realsense/archive/2.0.3.tar.gz
-    tar -xvzf 2.0.3.tar.gz
-    rm 2.0.3.tar.gz     
-    wget https://github.com/IntelRealSense/librealsense/archive/v2.10.3.tar.gz
-    tar -xvzf v2.10.3.tar.gz
-    rm v2.10.3.tar.gz
-    sudo apt-get -y install libusb-1.0-0-dev pkg-config libgtk-3-dev
-    sudo apt-get -y install libglfw3-dev                                                                                                                                                
-    cd librealsense-2.10.3                                                                                                                                                               
-    mkdir build && cd build               
-    cmake ../  
-    sudo make uninstall && make clean && make -j8 && sudo make install
-    printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
-    
-    # usb rules #
-    printf "${WHITE_TXT}\nInstalling USB rules...\n${NO_COLOR}"
-    sudo apt -y install setserial #for setting port latency
-    sudo cp $CATKIN_WS/src/lizi/rules/49-teensy.rules /etc/udev/rules.d
-    sudo cp $CATKIN_WS/src/lizi/rules/hokuyo.rules /etc/udev/rules.d/
-    sudo cp $CATKIN_WS/src/lizi/rules/99-realsense-libusb.rules /etc/udev/rules.d
-    sudo cp $CATKIN_WS/src/lizi/rules/microsoft_webcam.rules /etc/udev/rules.d/
-    sudo udevadm control --reload-rules && udevadm trigger
-    printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
-    
-fi
+# realsense depth camera 
+printf "${WHITE_TXT}\nInstalling depth camera...\n${NO_COLOR}"
+cd ~/$CATKIN_WS/src
+wget https://github.com/intel-ros/realsense/archive/2.0.3.tar.gz
+tar -xvzf 2.0.3.tar.gz
+rm 2.0.3.tar.gz     
+wget https://github.com/IntelRealSense/librealsense/archive/v2.10.3.tar.gz
+tar -xvzf v2.10.3.tar.gz
+rm v2.10.3.tar.gz
+sudo apt-get -y install libusb-1.0-0-dev pkg-config libgtk-3-dev
+sudo apt-get -y install libglfw3-dev                                                                                                                                                
+cd librealsense-2.10.3                                                                                                                                                               
+mkdir build && cd build               
+cmake ../  
+sudo make uninstall && make clean && make -j8 && sudo make install
+printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 
+# usb rules #
+printf "${WHITE_TXT}\nInstalling USB rules...\n${NO_COLOR}"
+sudo apt -y install setserial #for setting port latency
+sudo cp $CATKIN_WS/src/lizi/rules/* /etc/udev/rules.d
+sudo udevadm control --reload-rules && udevadm trigger
+printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
+    
 
 # compiling lizi #
 printf "${WHITE_TXT}Compiling lizi package...\n${NO_COLOR}"
