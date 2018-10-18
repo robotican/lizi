@@ -17,8 +17,8 @@
     <param name="calibrate_time" value="true"/>
     <param name="publish_intensity" value="false"/>
     <param name="publish_multiecho" value="false"/>
-    <param name="angle_min" value="-1.5707963"/>
-    <param name="angle_max" value="1.5707963"/>
+    <param name="angle_min" value="-1.369"/> <!---80-->
+    <param name="angle_max" value="1.369"/> <!--80-->
   </node>
 
 </launch>
