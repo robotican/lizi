@@ -7,8 +7,6 @@ WHITE_TXT='\e[1;37m'
 RED_TXT='\e[31m'
 NO_COLOR='\033[0m'
 
-# deremine if this script will install lizi hardware drivers
-INSTALL_HW_COMPS=false 
 
 printf "${WHITE_TXT}\n***Installing Lizi ROS-Kinetic Package***\n${NO_COLOR}"
 
@@ -23,14 +21,8 @@ else
   exit 1
 fi
 
-CATKIN_WS="$( roscd && cd .. )"
-
-# validate catkin workspace folder exist #
-printf "${WHITE_TXT}\nChecking if catkin workspace src folder exist...\n${NO_COLOR}"
-cd ~/$CATKIN_WS/src 
-if [ ! -d "catkin_ws" ]; then
-  printf "${RED_TXT}$CATKIN_WS/src folder does not exist. Create workspace and src folder and try again ${NO_COLOR}\n"
-fi
+CATKIN_WS_SRC=$( cd "$(dirname "$0")" && cd ../.. && pwd )
+printf "${WHITE_TXT}\nAssuming catkin workspace src folder path is: '$CATKIN_WS_SRC'\n${NO_COLOR}"
 
 printf "${WHITE_TXT}\nInstalling 3rd party packages...\n${NO_COLOR}"
 # third party packages #
@@ -60,7 +52,6 @@ sudo apt-get -y install ros-kinetic-trac-ik ros-kinetic-moveit-kinematics
 sudo apt-get -y install ros-kinetic-urg-node
 sudo apt-get -y install espeak espeak-data libespeak-dev 
 
-cd ~/$CATKIN_WS/src
 wget https://github.com/robotican/diff_drive_slip_controller/archive/V1.0.0.tar.gz
 tar -xvzf V1.0.0.tar.gz
 rm V1.0.0.tar.gz
@@ -82,7 +73,6 @@ printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 
 # realsense depth camera 
 printf "${WHITE_TXT}\nInstalling depth camera...\n${NO_COLOR}"
-cd ~/$CATKIN_WS/src
 wget https://github.com/intel-ros/realsense/archive/2.0.3.tar.gz
 tar -xvzf 2.0.3.tar.gz
 rm 2.0.3.tar.gz     
@@ -100,14 +90,14 @@ printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 # usb rules #
 printf "${WHITE_TXT}\nInstalling USB rules...\n${NO_COLOR}"
 sudo apt -y install setserial #for setting port latency
-sudo cp $CATKIN_WS/src/lizi/rules/* /etc/udev/rules.d
+sudo cp $CATKIN_WS_SRC/lizi/rules/* /etc/udev/rules.d
 sudo udevadm control --reload-rules && udevadm trigger
 printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
     
 
 # compiling lizi #
 printf "${WHITE_TXT}Compiling lizi package...\n${NO_COLOR}"
-cd ~/$CATKIN_WS
+cd $CATKIN_WS_SRC
 catkin_make -DCMAKE_BUILD_TYPE="Release"
 printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 
