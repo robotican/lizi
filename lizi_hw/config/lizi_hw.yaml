@@ -1,8 +1,8 @@
 # wheels control loop PID
-front_right_wheel_joint: {p: 70.0, i: 0.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
-front_left_wheel_joint: {p: 70.0, i: 0.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
-rear_right_wheel_joint: {p: 70.0, i: 0.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
-rear_left_wheel_joint: {p: 70.0, i: 0.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
+front_right_wheel_joint: {p: 130.0, i: 0.01, d: 0.0, i_clamp: 350.0, antiwindup: true}
+front_left_wheel_joint: {p: 130.0, i: 0.01, d: 0.0, i_clamp: 350.0, antiwindup: true}
+rear_right_wheel_joint: {p: 130.0, i: 0.01, d: 0.0, i_clamp: 350.0, antiwindup: true}
+rear_left_wheel_joint: {p: 130.0, i: 0.01, d: 0.0, i_clamp: 350.0, antiwindup: true}
 
 lpf: {front_right: 0.01, front_left: 0.01, rear_right: 0.01, rear_left: 0.01}
 
