@@ -29,9 +29,9 @@ cd $CATKIN_WS_SRC
 
 printf "${WHITE_TXT}\nInstalling 3rd party packages...\n${NO_COLOR}"
 # third party packages #
-sudo apt-get update
-sudo apt-get dist-upgrade 
-sudo apt-get upgrade 
+sudo apt-get -y update
+sudo apt-get -y dist-upgrade 
+sudo apt-get -y upgrade 
 
 # from this point on, exit and notify immediately if a command exits with a non-zero status
 set -eb
@@ -52,6 +52,7 @@ sudo apt-get -y install ros-kinetic-serial
 sudo apt-get -y install ros-kinetic-robot-localization
 sudo apt-get -y install ros-kinetic-trac-ik ros-kinetic-moveit-kinematics 
 sudo apt-get -y install ros-kinetic-urg-node
+sudo apt-get -y install ros-kinetic-usb-cam
 sudo apt-get -y install espeak espeak-data libespeak-dev 
 
 wget https://github.com/robotican/diff_drive_slip_controller/archive/V1.0.0.tar.gz

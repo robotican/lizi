@@ -24,8 +24,8 @@
    
    <xacro:if value="$(arg cam)">
        
-        <xacro:Camera name="camera" 
-                      link="cam_link" 
+        <xacro:Camera name="rgb_cam" 
+                      link="rgb_cam_link" 
                       image_width="1280" 
                       image_height="720" 
                       image_format="R8G8B8" 
@@ -40,8 +40,8 @@
         
     <xacro:if value="$(arg depth_cam)">
         
-        <xacro:DepthCam name="depth_cam" 
-                        link="depth_cam_link" 
+        <xacro:DepthCam name="camera" 
+                        link="camera_link" 
                         optical_frame="camera_depth_optical_frame"
                         horizontal_fov="1.592" 
                         img_width="1280"
