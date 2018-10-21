@@ -6,16 +6,14 @@
     
   <xacro:property name="M_PI" value="3.14159265358979" />
 
-  
-    
   <link
     name="base_link">
     <inertial>
       <origin
-        xyz="6.00417829000094622 0.00524236473615063 0.0404695921883583"
+        xyz="0.0030152 0.00524236473615063 0.0404695921883583"
         rpy="0 0 0" />
       <mass
-        value="0.170251986966204" />
+        value="1.170251986966204" />
       <inertia
         ixx="0.00417603662557191"
         ixy="-0.000134866417293007"
@@ -247,10 +245,9 @@
     <collision>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="${M_PI/2} 0 0" />
       <geometry>
-        <mesh
-          filename="package://lizi_description/meshes/wheel.STL" />
+        <cylinder  length="0.025" radius="0.076"/> 
       </geometry>
     </collision>
   </link>
@@ -300,10 +297,9 @@
     <collision>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="${M_PI/2} 0 0" />
       <geometry>
-        <mesh
-          filename="package://lizi_description/meshes/wheel.STL" />
+        <cylinder  length="0.025" radius="0.076"/> 
       </geometry>
     </collision>
   </link>
@@ -353,10 +349,9 @@
     <collision>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="${M_PI/2} 0 0" />
       <geometry>
-        <mesh
-          filename="package://lizi_description/meshes/wheel.STL" />
+        <cylinder  length="0.025" radius="0.076"/> 
       </geometry>
     </collision>
   </link>
@@ -406,10 +401,9 @@
     <collision>
       <origin
         xyz="0 0 0"
-        rpy="0 0 0" />
+        rpy="${M_PI/2} 0 0" />
       <geometry>
-        <mesh
-          filename="package://lizi_description/meshes/wheel.STL" />
+        <cylinder  length="0.025" radius="0.076"/> 
       </geometry>
     </collision>
   </link>
