@@ -153,7 +153,7 @@
         <fdir1>1 0 0</fdir1>
         <maxVel>1.0</maxVel>
         <minDepth>0.00</minDepth>
-<!--                <material>Gazebo/Black</material>-->
+        <material>Gazebo/DarkGrey</material>
     </gazebo>
     
     <gazebo reference="front_right_wheel_link">
@@ -165,7 +165,7 @@
         <fdir1>1 0 0</fdir1>
         <maxVel>1.0</maxVel>
         <minDepth>0.00</minDepth>
-<!--                <material>Gazebo/Black</material>-->
+        <material>Gazebo/DarkGrey</material>
     </gazebo>
     
     <gazebo reference="rear_left_wheel_link">
@@ -177,7 +177,7 @@
         <fdir1>1 0 0</fdir1>
         <maxVel>1.0</maxVel>
         <minDepth>0.00</minDepth>
-<!--                <material>Gazebo/Black</material>-->
+        <material>Gazebo/DarkGrey</material>
     </gazebo>
     
     <gazebo reference="rear_right_wheel_link">
@@ -189,11 +189,12 @@
         <fdir1>1 0 0</fdir1>
         <maxVel>1.0</maxVel>
         <minDepth>0.00</minDepth>
-<!--                <material>Gazebo/Black</material>-->
+        <material>Gazebo/DarkGrey</material>
     </gazebo>
+
     
     <gazebo reference="base_link">
-        <material>Gazebo/Grey</material>
+        <material>Gazebo/Grass</material>
     </gazebo>
     <gazebo reference="left_urf_link">
         <material>Gazebo/Black</material>
@@ -203,6 +204,12 @@
     </gazebo>
     <gazebo reference="right_urf_link">
         <material>Gazebo/Black</material>
+    </gazebo>
+    <gazebo reference="laser_link">
+        <material>Gazebo/DarkGrey</material>
+    </gazebo>
+    <gazebo reference="camera_link">
+        <material>Gazebo/Grey</material>
     </gazebo>
 </robot>
         

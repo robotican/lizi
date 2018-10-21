@@ -5,7 +5,7 @@
   xmlns:xacro="http://www.ros.org/wiki/xacro" name="lizi">
     
   <xacro:property name="M_PI" value="3.14159265358979" />
-
+  
   <link
     name="base_link">
     <inertial>
@@ -13,7 +13,7 @@
         xyz="0.0030152 0.00524236473615063 0.0404695921883583"
         rpy="0 0 0" />
       <mass
-        value="1.170251986966204" />
+        value="5.470251986966204" />
       <inertia
         ixx="0.00417603662557191"
         ixy="-0.000134866417293007"
@@ -33,7 +33,7 @@
       <material
         name="">
         <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+          rgba="0 0 0.8 1" />
       </material>
     </visual>
     <collision>
