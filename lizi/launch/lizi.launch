@@ -27,8 +27,19 @@
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" > 
         <param name="use_gui" value="false"/>
     </node>
+    
+    <group if="$(arg amcl)">
+        <include file="$(find lizi_control)/launch/lizi_controllers.launch" >
+            <arg name="enable_mbc_odom_tf" value="false"/>
+        </include>
+    </group>
+    
+    <group unless="$(arg amcl)">
+        <include file="$(find lizi_control)/launch/lizi_controllers.launch" >
+            <arg name="enable_mbc_odom_tf" value="true"/>
+        </include>
+    </group>
         
-    <include file="$(find lizi_control)/launch/lizi_controllers.launch" />
     
     <include file="$(find espeak_ros)/launch/espeak_ros.launch" />
     
@@ -46,6 +57,10 @@
             </group>   
         </group>    
     </group>
+    
+    
+    
+    
     
     <!--load simulation stuff-->
     <group if="$(arg gazebo)">

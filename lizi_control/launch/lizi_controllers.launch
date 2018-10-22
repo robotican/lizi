@@ -1,10 +1,12 @@
 <?xml version="1.0"?>
 
 <launch>
-
-  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <arg name="enable_mbc_odom_tf" default="false" doc="enable mobile_base_controller odom tf"/>
+  
+  
   <rosparam file="$(find lizi_control)/config/lizi_control.yaml" command="load"/>
-
+  <param name="mobile_base_controller/enable_odom_tf" value="$(arg enable_mbc_odom_tf)" />
+  
   <!-- load the controllers -->
   <node name="controller_spawner"
     pkg="controller_manager"
