@@ -142,7 +142,7 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
 
         wheel->last_position = wheel->position;
 
-        wheel->raw_velocity = ticksToRads(delta_x) / delta_t.toSec();
+        wheel->raw_velocity = delta_x / delta_t.toSec();
         wheel->last_position = wheel->position;
     }
     vels_lpf_.update();
@@ -245,7 +245,7 @@ void RicBoard::onLoggerMsg(const ric_interface_ros::Logger::ConstPtr& msg)
 
 void RicBoard::onEncoderMsg(const ric_interface_ros::Encoder::ConstPtr& msg)
 {
-    double new_pos = ((double)msg->ticks / ENC_TICKS_PER_ROUND) * 2.0 * M_PI;
+    double new_pos = ticksToRads((double)msg->ticks);
     int encoder_id = msg->id;
 
     switch (encoder_id)

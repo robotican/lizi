@@ -40,12 +40,12 @@ struct wheel
 {
     std::string joint_name;
     int id = 0;
-    double position = 0;
-    double last_position = 0;
-    double velocity = 0;
-    double raw_velocity = 0;
+    double position = 0; //rads
+    double last_position = 0; //rads
+    double velocity = 0; //filtered rad/sec
+    double raw_velocity = 0; //rad/sec
     double effort = 0;
-    double command_velocity = 0;
+    double command_velocity = 0; //rad/sec
     double command_effort = 0;
     double vel_lpf_alpha = 0;
     bool reverse_command = false;
