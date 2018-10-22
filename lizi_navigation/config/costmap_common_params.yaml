@@ -1,5 +1,5 @@
-footprint: [[0.25, 0.25], [-0.25, 0.25], [-0.25, -0.25], [0.25, -0.25]]
-footprint_padding: 0.02
+footprint: [[0.26, 0.26], [-0.26, 0.26], [-0.26, -0.26], [0.26, -0.26]]
+footprint_padding: 0.00002
 
 robot_base_frame: base_footprint
 update_frequency: 5.0
@@ -10,6 +10,8 @@ resolution: 0.1 # 0.05
 
 obstacle_range: 4.5
 raytrace_range: 5.0
+inflation_radius: 0.55
+cost_scaling_factor: 0.33
 
 static:
     map_topic: /map
@@ -20,4 +22,11 @@ obstacles_laser:
     laser: {sensor_frame: laser_link, data_type: LaserScan, clearing: true, marking: true, topic: scan, inf_is_valid: true}
 
 #inflation:
-#    inflation_radius: 0.30
+#    cost_scaling_factor: 0.33
+#    inflation_radius: 1.0 
+
+
+
+
+
+

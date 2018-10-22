@@ -113,7 +113,7 @@ odom0_relative: false
 #odom0_pose_rejection_threshold: 5
 #odom0_twist_rejection_threshold: 1
 
-imu0: /IMU
+imu0: /imu/data
 imu0_config: [false, false, false,
                   false,  false,  false,
                   false, false, false,

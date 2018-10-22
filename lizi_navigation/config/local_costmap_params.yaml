@@ -2,7 +2,8 @@ global_frame: odom
 rolling_window: true
 
 inflation:
-    inflation_radius: 0.1
+    inflation_radius: 0.03
+    cost_scaling_factor: 10
 
 plugins:
   - {name: obstacles_laser,           type: "costmap_2d::ObstacleLayer"}
