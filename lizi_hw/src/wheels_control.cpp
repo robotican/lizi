@@ -61,15 +61,15 @@ void WheelsControl::init(ros::NodeHandle &nh, std::vector<wheel*> & wheels)
 
     start_time_ = ros::Time::now();
 
-    cmd_pub = nh.advertise<std_msgs::Float64>("/mypid/cmd", 10);
-    err_pub = nh.advertise<std_msgs::Float64>("/mypid/error", 10);
-    output_pub = nh.advertise<std_msgs::Float64>("/mypid/output", 10);
+    pid_data_pub_ = nh.advertise<lizi_hw::WheelsPID>("wheels_pid", 10);
 
 }
 
 void WheelsControl::update(const ros::Duration& dt)
 {
     // duration since pid controller start time
+
+    lizi_hw::WheelsPID pid_msg;
 
     for (int i=0; i < pids_.size(); i++)
     {
@@ -80,27 +80,17 @@ void WheelsControl::update(const ros::Duration& dt)
         wheels_[i]->command_effort = pids_[i].computeCommand(error, dt);
 
 
-        if (wheels_[i]->joint_name == "front_right_wheel_joint")
-        {
-            double pe=0, ie=0, de=0;
-            pids_[i].getCurrentPIDErrors(&pe, &ie, &de);
-//            ROS_INFO("cmd: %f, effort: %f, vel: %f, error: %f, dt: %f, pe: %f, ie: %f, de: %f", command, wheels_[i]->command_effort, velocity,
-//                     error, dt.toSec(),
-//                     pe, ie, de);
+        double pe=0, ie=0, de=0;
+        pids_[i].getCurrentPIDErrors(&pe, &ie, &de);
 
-            std_msgs::Float64 err_msg;
-            err_msg.data = error;
-            err_pub.publish(err_msg);
+        lizi_hw::WheelPID pid_data;
+        pid_data.joint_name = wheels_[i]->joint_name;
+        pid_data.command = command;
+        pid_data.error = error;
+        pid_data.output = wheels_[i]->command_effort;
 
-            std_msgs::Float64 cmd_msg;
-            cmd_msg.data = command;
-            cmd_pub.publish(cmd_msg);
-
-            std_msgs::Float64 output_msg;
-            err_msg.data = wheels_[i]->command_effort;
-            output_pub.publish(err_msg);
-
-        }
-
+        pid_msg.pids.push_back(pid_data);
     }
+
+    pid_data_pub_.publish(pid_msg);
 }
