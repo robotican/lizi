@@ -134,12 +134,6 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
     {
         double delta_x = wheel->position - wheel->last_position;
 
-//        if (wheel->joint_name == "front_right_wheel_joint")
-//        {
-//            ROS_INFO("delta: %f",
-//                     delta_x);
-//        }
-
         wheel->last_position = wheel->position;
 
         wheel->raw_velocity = delta_x / delta_t.toSec();
@@ -167,13 +161,6 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
             servo_command -= ric_servo_bias_;
 
         servo_command = boost::algorithm::clamp(servo_command, -500, 500);
-
-//        if (w->joint_name == "front_right_wheel_joint")
-//        {
-//            ROS_INFO("ric_cmd: %f",
-//                     servo_command);
-//        }
-
 
         // send servo commands to ricboard
         ric_interface_ros::Servo servo_msg;
