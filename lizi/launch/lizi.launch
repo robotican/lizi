@@ -4,16 +4,20 @@
 
 <launch>
     
-    <!--common settings-->
+    <!-- gazebo -->
     <arg name="gazebo" default="false" doc="execute lizi inside gazebo sim"/>
     <arg name="world_name" default="worlds/empty.world"/> 
     <arg name="x" default="0.0"/>
     <arg name="y" default="0.0"/>
     <arg name="z" default="0.0"/>
     <arg name="Y" default="0.0" />
+    
+    <!--  hardware    -->
     <arg name="cam" default="false"/>
     <arg name="depth_cam" default="false"/>
     <arg name="lidar" default="false"/>
+    
+    <!--   navigation and mapping   -->
     <arg name="gmapping" default="false"/>
     <arg name="hector_slam" default="false"/>
     <arg name="amcl" default="false"/>
@@ -34,10 +38,18 @@
         </include>
     </group>
     
-    <group unless="$(arg amcl)">
+    <group if="$(arg robot_localization)">
         <include file="$(find lizi_control)/launch/lizi_controllers.launch" >
-            <arg name="enable_mbc_odom_tf" value="true"/>
+            <arg name="enable_mbc_odom_tf" value="false"/>
         </include>
+    </group>
+    
+    <group unless="$(arg robot_localization)">
+        <group unless="$(arg amcl)">
+            <include file="$(find lizi_control)/launch/lizi_controllers.launch" >
+                <arg name="enable_mbc_odom_tf" value="true"/>
+            </include>
+        </group>
     </group>
         
     
@@ -57,10 +69,6 @@
             </group>   
         </group>    
     </group>
-    
-    
-    
-    
     
     <!--load simulation stuff-->
     <group if="$(arg gazebo)">
@@ -96,7 +104,7 @@
                 
         <group if="$(arg lidar)">
             <include file="$(find lizi_hw)/launch/hokuyu_lidar.launch" />
-        </group>-->
+        </group>
         
     </group>
     
