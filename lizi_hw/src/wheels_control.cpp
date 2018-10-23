@@ -56,13 +56,12 @@ void WheelsControl::init(ros::NodeHandle &nh, std::vector<wheel*> & wheels)
             exit(EXIT_FAILURE);
         }
         pids_[i].updateDynamicReconfig( pids_[i].getGains());
-        //pids_[i].reset();
+        pids_[i].reset();
     }
 
     start_time_ = ros::Time::now();
 
     pid_data_pub_ = nh.advertise<lizi_hw::WheelsPID>("wheels_pid", 10);
-
 }
 
 void WheelsControl::update(const ros::Duration& dt)
