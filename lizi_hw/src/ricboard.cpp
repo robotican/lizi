@@ -128,7 +128,7 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
 
 void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
 {
-    ros::Duration delta_t = ros::Time::now() - prev_lpf_time_;
+    ros::Duration delta_t(0.006);//ros::Time::now() - prev_lpf_time_;
 
     for (auto &wheel : wheels_control_.getWheels())
     {

@@ -1,8 +1,8 @@
 # wheels control loop PID
-front_right_wheel_joint: {p: 50.0, i: 1.1, d: 0.0, i_clamp: 350.0, antiwindup: true}
-front_left_wheel_joint: {p: 50.0, i: 1.1, d: 0.0, i_clamp: 350.0, antiwindup: true}
-rear_right_wheel_joint: {p: 50.0, i: 1.1, d: 0.0, i_clamp: 350.0, antiwindup: true}
-rear_left_wheel_joint: {p: 50.0, i: 1.1, d: 0.0, i_clamp: 350.0, antiwindup: true}
+front_right_wheel_joint: {p: 250.0, i: 160.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
+front_left_wheel_joint: {p: 250.0, i: 160.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
+rear_right_wheel_joint: {p: 250.0, i: 160.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
+rear_left_wheel_joint: {p: 250.0, i: 160.0, d: 0.0, i_clamp: 350.0, antiwindup: true}
 
 lpf: {front_right: 0.01, front_left: 0.01, rear_right: 0.01, rear_left: 0.01}
 
@@ -10,11 +10,11 @@ reverse_command: {front_right: true, front_left: false, rear_right: false, rear_
 reverse_feedback: {front_right: false, front_left: false, rear_right: false, rear_left: false}
 
 # delta t for velocity deriative calculation (seconds)
-control_loop_interval: 0.02
+control_loop_interval: 0.006
 
 # add bias to servo command. lets say motor only start
 # to react to commands > 1600 or < 1400. Than a bias
 # of 100 needs to be added to each command. Enter 0 to disable
-ric_servo_bias: 100
+ric_servo_bias: 0
 
 #motor_max_rpm: 150
