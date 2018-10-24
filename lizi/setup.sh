@@ -55,24 +55,36 @@ sudo apt-get -y install ros-kinetic-urg-node
 sudo apt-get -y install ros-kinetic-usb-cam
 sudo apt-get -y install espeak espeak-data libespeak-dev 
 
-wget https://github.com/robotican/diff_drive_slip_controller/archive/V1.0.0.tar.gz
-tar -xvzf V1.0.0.tar.gz
-rm V1.0.0.tar.gz
-wget https://github.com/robotican/ric_interface_ros/archive/V1.0.2.tar.gz
-tar -xvzf V1.0.3.tar.gz
-rm V1.0.3.tar.gz
-wget https://github.com/robotican/mobilican_macros/archive/V1.0.0.tar.gz
-tar -xvzf V1.0.0.tar.gz
-rm V1.0.0.tar.gz
-wget https://github.com/elhayra/lpf_ros/archive/V1.0.0.tar.gz
-tar -xvzf V1.0.0.tar.gz
-rm V1.0.0.tar.gz
-wget https://github.com/robotican/espeak_ros/archive/V1.0.2.tar.gz
-tar -xvzf V1.0.2.tar.gz
-rm V1.0.2.tar.gz
-wget https://github.com/robotican/mobilican_rules/archive/V1.0.0.tar.gz
-tar -xvzf V1.0.0.tar.gz
-rm V1.0.0.tar.gz
+DIFF_SLIP_CONTROLLER_V="1.0.0"
+wget https://github.com/robotican/diff_drive_slip_controller/archive/V"$DIFF_SLIP_CONTROLLER_V".tar.gz
+tar -xvzf V"$DIFF_SLIP_CONTROLLER_V".tar.gz
+rm V"$DIFF_SLIP_CONTROLLER_V".tar.gz
+
+RIC_INTERFACE_ROS_V="1.0.3"
+wget https://github.com/robotican/ric_interface_ros/archive/V"$RIC_INTERFACE_ROS_V".tar.gz
+tar -xvzf V"$RIC_INTERFACE_ROS_V".tar.gz
+rm V"$RIC_INTERFACE_ROS_V".tar.gz
+
+MOBILICAN_MACROS_V="1.0.0"
+wget https://github.com/robotican/mobilican_macros/archive/V"$MOBILICAN_MACROS_V".tar.gz
+tar -xvzf V"$MOBILICAN_MACROS_V".tar.gz
+rm V"$MOBILICAN_MACROS_V".tar.gz
+
+LPF_ROS_V="1.0.0"
+wget https://github.com/elhayra/lpf_ros/archive/V"$LPF_ROS_V".tar.gz
+tar -xvzf V"$LPF_ROS_V".tar.gz
+rm V"$LPF_ROS_V".tar.gz
+
+ESPEAK_ROS_V="1.0.2"
+wget https://github.com/robotican/espeak_ros/archive/V"$ESPEAK_ROS_V".tar.gz
+tar -xvzf V"$ESPEAK_ROS_V".tar.gz
+rm V"$ESPEAK_ROS_V".tar.gz
+
+MOBILICAN_RULES_V="1.0.0"
+wget https://github.com/robotican/mobilican_rules/archive/V"$MOBILICAN_RULES_V".tar.gz
+tar -xvzf V"$MOBILICAN_RULES_V".tar.gz
+rm V"$MOBILICAN_RULES_V".tar.gz
+
 sudo dpkg -i $CATKIN_WS_SRC/lizi/lizi/ric_driver/ric-interface.deb
 
 sudo apt-get -y install ros-kinetic-hector-gazebo-plugins
@@ -98,7 +110,7 @@ printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 # usb rules #
 printf "${WHITE_TXT}\nInstalling USB rules...\n${NO_COLOR}"
 sudo apt -y install setserial #for setting port latency
-sudo cp $CATKIN_WS_SRC/mobilican_rules/rules/* /etc/udev/rules.d
+sudo cp $CATKIN_WS_SRC/mobilican_rules-$MOBILICAN_RULES_V/rules/* /etc/udev/rules.d
 sudo udevadm control --reload-rules && udevadm trigger
 printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
     
