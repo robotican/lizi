@@ -61,6 +61,8 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
     battery_pub_ = nh.advertise<sensor_msgs::BatteryState>("battery", 10);
     espeak_pub_ = nh.advertise<std_msgs::String>("/espeak_node/speak_line", 10);
 
+    terminate_ric_client_ = nh.serviceClient<std_srvs::Trigger>("terminate_ric");
+
     keepalive_timer_ = nh.createTimer(ros::Duration(RIC_DEAD_TIMEOUT), &RicBoard::onKeepAliveTimeout, this);
 
     front_right_wheel_.joint_name = WHEEL_FRONT_RIGHT_JOINT;
@@ -78,10 +80,8 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
         !nh.getParam("lpf/rear_right", rear_right_wheel_.vel_lpf_alpha) ||
         !nh.getParam("lpf/rear_left", rear_left_wheel_.vel_lpf_alpha))
     {
-        ROS_ERROR("[lizi_hw/ricboard]: one of the lpf params is missing. "
-                  "check config file. shutting down.");
-        ros::shutdown();
-        exit(EXIT_FAILURE);
+        terminateWithMessage("one of the lpf params is missing. "
+                             "check config file. shutting down.", false);
     }
 
     if (!nh.getParam("reverse_command/front_right", front_right_wheel_.reverse_command) ||
@@ -89,10 +89,8 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
         !nh.getParam("reverse_command/rear_right", rear_right_wheel_.reverse_command) ||
         !nh.getParam("reverse_command/rear_left", rear_left_wheel_.reverse_command))
     {
-        ROS_ERROR("[lizi_hw/ricboard]: one of the reverse_command params is missing. "
-                  "check config file. shutting down.");
-        ros::shutdown();
-        exit(EXIT_FAILURE);
+        terminateWithMessage("one of the reverse_command params is missing. "
+                             "check config file. shutting down.", false);
     }
 
     if (!nh.getParam("reverse_feedback/front_right", front_right_wheel_.reverse_feedback) ||
@@ -100,10 +98,8 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
         !nh.getParam("reverse_feedback/rear_right", rear_right_wheel_.reverse_feedback) ||
         !nh.getParam("reverse_feedback/rear_left", rear_left_wheel_.reverse_feedback))
     {
-        ROS_ERROR("[lizi_hw/ricboard]: one of the reverse_feedback params is missing. "
-                  "check config file. shutting down.");
-        ros::shutdown();
-        exit(EXIT_FAILURE);
+        terminateWithMessage("one of the reverse_feedback params is missing. \n"
+                             "check config file. shutting down.", false);
     }
 
     std::vector<wheel*> wheels;
@@ -157,10 +153,7 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
         wheels_control_.update(ros::Duration(delta_t));
 
     } catch (std::runtime_error) {
-        speakMsg("motors over voltage protection. shutting down");
-        ROS_ERROR("motors over voltage protection. shutting down");
-        ros::shutdown();
-        exit(EXIT_FAILURE);
+        terminateWithMessage("motors over voltage protection. shutting down", true);
     }
 
     prev_lpf_time_ = ros::Time::now();
@@ -196,12 +189,7 @@ void RicBoard::onKeepAliveTimeout(const ros::TimerEvent &event)
     if (got_keepalive_)
         got_keepalive_ = false;
     else
-    {
-        speakMsg("rikboard disconnected. shutting down");
-        ROS_ERROR("[lizi_hw/ricboard_pub]: ricboard disconnected. shutting down...");
-        ros::shutdown();
-        exit(EXIT_FAILURE);
-    }
+        terminateWithMessage("ricboard disconnected. shutting down", true);
 }
 
 void RicBoard::onLocationMsg(const ric_interface_ros::Location::ConstPtr &msg)
@@ -238,13 +226,13 @@ void RicBoard::onLoggerMsg(const ric_interface_ros::Logger::ConstPtr& msg)
     switch(msg->sevirity)
     {
         case ric_interface_ros::Logger::INFO:
-            ROS_INFO("message from ricboard: %s", msg->message.c_str());
+            ROS_INFO("ricboard says: %s", msg->message.c_str());
             break;
         case ric_interface_ros::Logger::WARN:
-            ROS_WARN("message from ricboard: %s", msg->message.c_str());
+            ROS_WARN("ricboard says: %s", msg->message.c_str());
             break;
         case ric_interface_ros::Logger::CRITICAL:
-            ROS_ERROR("message from ricboard: %s", msg->message.c_str());
+            ROS_ERROR("ricboard says: %s", msg->message.c_str());
             break;
     }
 }
@@ -398,6 +386,17 @@ void RicBoard::registerHandles(hardware_interface::JointStateInterface &joint_st
                                                         &w->command_velocity);
         vel_joint_interface.registerHandle(joint_handle);
     }
+}
+
+void RicBoard::terminateWithMessage(const char * msg, bool speak)
+{
+    std_srvs::Trigger kill_ric_srv;
+    if (!terminate_ric_client_.call(kill_ric_srv))
+        ROS_ERROR("calling ric_terminate service failed");
+    if (speak)
+        speakMsg(msg);
+    ROS_ERROR("%s", msg);
+    ros::shutdown();
 }
 
 void RicBoard::read(const ros::Time &now)

@@ -47,6 +47,7 @@
 #include <ric_interface_ros/Location.h>
 #include <ric_interface_ros/Battery.h>
 #include <ros/ros.h>
+#include <std_srvs/Trigger.h>
 #include <tf/tf.h>
 #include <sensor_msgs/Range.h>
 #include <sensor_msgs/Imu.h>
@@ -124,6 +125,8 @@ private:
             battery_pub_;
     ros::Publisher espeak_pub_;
 
+    ros::ServiceClient terminate_ric_client_;
+
     ros::Timer ric_pub_timer_,
             keepalive_timer_,
             vel_delta_timer_;
@@ -175,6 +178,8 @@ public:
     static double ticksToRads(double rpm);
 
     void speakMsg(const std::string& msg);
+
+    void terminateWithMessage(const char * msg, bool speak);
 };
 
 
