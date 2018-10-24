@@ -58,7 +58,7 @@ sudo apt-get -y install espeak espeak-data libespeak-dev
 wget https://github.com/robotican/diff_drive_slip_controller/archive/V1.0.0.tar.gz
 tar -xvzf V1.0.0.tar.gz
 rm V1.0.0.tar.gz
-https://github.com/robotican/ric_interface_ros/archive/V1.0.2.tar.gz
+wget https://github.com/robotican/ric_interface_ros/archive/V1.0.2.tar.gz
 tar -xvzf V1.0.2.tar.gz
 rm V1.0.1.tar.gz
 wget https://github.com/robotican/mobilican_macros/archive/V1.0.0.tar.gz
