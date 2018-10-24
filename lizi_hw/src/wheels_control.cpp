@@ -103,7 +103,10 @@ void WheelsControl::update(const ros::Duration& dt)
     {
         if ( (ros::Time::now() - protect.start_time) >
              ros::Duration(protect.time_thresh))
-            throw std::runtime_error("motor error exceeded max value for more than time threshold");
+        {
+            if (protect.enable)
+                throw std::runtime_error("motor error exceeded max value for more than time threshold");
+        }
     }
 
     pid_data_pub_.publish(pid_msg);
