@@ -67,8 +67,8 @@ rm V1.0.0.tar.gz
 wget https://github.com/elhayra/lpf_ros/archive/V1.0.0.tar.gz
 tar -xvzf V1.0.0.tar.gz
 rm V1.0.0.tar.gz
-wget https://github.com/robotican/espeak_ros/archive/V1.0.1.tar.gz
-tar -xvzf V1.0.1.tar.gz
+wget https://github.com/robotican/espeak_ros/archive/V1.0.2.tar.gz
+tar -xvzf V1.0.2.tar.gz
 rm V1.0.1.tar.gz
 wget https://github.com/robotican/mobilican_rules/archive/V1.0.0.tar.gz
 tar -xvzf V1.0.0.tar.gz
