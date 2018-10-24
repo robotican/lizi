@@ -64,17 +64,23 @@ void WheelsControl::init(ros::NodeHandle &nh, std::vector<wheel*> & wheels)
     pid_data_pub_ = nh.advertise<lizi_hw::WheelsPID>("wheels_pid", 10);
 }
 
+// dt duration is since pid controller start time
 void WheelsControl::update(const ros::Duration& dt)
 {
-    // duration since pid controller start time
-
     lizi_hw::WheelsPID pid_msg;
+
+    bool error_exceeded_thresh = false;
 
     for (int i=0; i < pids_.size(); i++)
     {
         double command = wheels_[i]->command_velocity;
         double velocity = wheels_[i]->velocity;
         double error = command - velocity;
+
+        // error thresh is relative to command
+        float err_thresh_val = protect.error_thresh * command;
+        if (error > err_thresh_val)
+            error_exceeded_thresh = true;
 
         wheels_[i]->command_effort = pids_[i].computeCommand(error, dt);
 
@@ -91,5 +97,24 @@ void WheelsControl::update(const ros::Duration& dt)
         pid_msg.pids.push_back(pid_data);
     }
 
+    if (!error_exceeded_thresh)
+        protect.start_time = ros::Time::now();
+    else
+    {
+        if ( (ros::Time::now() - protect.start_time) >
+             ros::Duration(protect.time_thresh))
+            throw std::runtime_error("motor error exceeded max value for more than time threshold");
+    }
+
     pid_data_pub_.publish(pid_msg);
+}
+
+void WheelsControl::enableOVProtection(float time_thresh, float error_thresh)
+{
+    if (error_thresh < 0 || error_thresh > 1)
+        throw std::invalid_argument("error_thresh param must be between 0 and 1");
+    protect.enable = true;
+    protect.time_thresh = time_thresh;
+    protect.error_thresh = error_thresh;
+    protect.start_time = ros::Time::now();
 }

@@ -121,6 +121,17 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
     double control_loop_interval = 0.05;
     nh.getParam("control_loop_interval", control_loop_interval);
 
+    // motors over voltage protection
+    double protect_err_thresh = 0.9;
+    double protect_time_thresh = 5.0;
+    bool protect_enable = true;
+    nh.getParam("enable_motors_protection", protect_enable);
+    nh.getParam("protection_error_threshold", protect_err_thresh);
+    nh.getParam("protection_time_threshold", protect_time_thresh);
+
+    if (protect_enable)
+        wheels_control_.enableOVProtection(protect_time_thresh, protect_err_thresh);
+
     vel_delta_timer_ = nh.createTimer(ros::Duration(control_loop_interval), &RicBoard::onControlLoopTimer, this);
 
     prev_lpf_time_ = ros::Time::now();
@@ -141,7 +152,16 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
     }
     vels_lpf_.update();
 
-    wheels_control_.update(ros::Duration(delta_t));
+    try{
+
+        wheels_control_.update(ros::Duration(delta_t));
+
+    } catch (std::runtime_error) {
+        speakMsg("motors over voltage protection. shutting down");
+        ROS_ERROR("motors over voltage protection. shutting down");
+        ros::shutdown();
+        exit(EXIT_FAILURE);
+    }
 
     prev_lpf_time_ = ros::Time::now();
 

@@ -17,4 +17,8 @@ control_loop_interval: 0.006
 # of 100 needs to be added to each command. Enter 0 to disable
 ric_servo_bias: 0
 
-#motor_max_rpm: 150
+# motors over voltage protection settings
+enable_motors_protection: true
+protection_error_threshold: 0.9 # percentage % of the setpoint 0-1
+protection_time_threshold: 4.0 # sec
+

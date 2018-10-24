@@ -36,6 +36,7 @@
 #ifndef LIZI_HW_PID_CONTROL_H
 #define LIZI_HW_PID_CONTROL_H
 
+#include <exception>
 #include <control_toolbox/pid.h>
 #include <lizi_hw/WheelsPID.h>
 #include <lizi_hw/WheelPID.h>
@@ -43,6 +44,15 @@
 
 // This class takes 4 wheels velocity commands from diff_drive_controller,
 // and output effort command for each one, so it can be sent to RicBoard
+
+struct ov_protection_settings
+{
+    ros::Time start_time;
+    bool enable = false;
+    float error_thresh = 0;
+    float time_thresh = 0;
+    bool trigger = false;
+};
 
 class WheelsControl
 {
@@ -56,12 +66,20 @@ private:
 
     ros::Publisher pid_data_pub_;
 
+    ov_protection_settings protect;
+
 public:
     void init(ros::NodeHandle &nh, std::vector<wheel*> & wheels);
 
     void update(const ros::Duration& dt);
 
     std::vector<wheel*> getWheels() { return wheels_; }
+
+    // enable over voltage protection. if error > error_thresh and
+    // time > time_thresh, then throw runtime exception
+    // @param time_thresh - in seconds
+    // @param error_thresh - percentage 0-1
+    void enableOVProtection(float time_thresh, float error_thresh);
 
 };
 

@@ -55,10 +55,11 @@
 #include <sensor_msgs/NavSatStatus.h>
 #include <sensor_msgs/BatteryState.h>
 #include <hardware_interface/joint_state_interface.h>
-#include <math.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <std_msgs/String.h>
 #include <boost/algorithm/clamp.hpp>
+#include <math.h>
+#include <exception>
 #include "wheel.h"
 #include "wheels_control.h"
 #include "velocities_lpf.h"
