@@ -60,7 +60,7 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
     gps_pub_ = nh.advertise<sensor_msgs::NavSatFix>("gps", 10);
     battery_pub_ = nh.advertise<sensor_msgs::BatteryState>("battery", 10);
     espeak_pub_ = nh.advertise<std_msgs::String>("/espeak_node/speak_line", 10);
-    diagnos_pub_ = nh.advertise<std_msgs::String>("/diagnostic", 10);
+    diagnos_pub_ = nh.advertise<diagnostic_msgs::DiagnosticArray>("/diagnostics", 10);
 
     terminate_ric_client_ = nh.serviceClient<std_srvs::Trigger>("terminate_ric");
 
@@ -165,7 +165,7 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
         wheels_control_.update(ros::Duration(delta_t));
 
     } catch (std::runtime_error) {
-        terminateWithMessage("motors over voltage protection. shutting down", true);
+       // terminateWithMessage("motors over voltage protection. shutting down", true);
     }
 
     prev_lpf_time_ = ros::Time::now();
@@ -204,33 +204,88 @@ void RicBoard::onKeepAliveTimeout(const ros::TimerEvent &event)
         terminateWithMessage("ricboard disconnected. shutting down", true);
 }
 
+void RicBoard::sendDiagnosticsMsg(const diagnostic_msgs::DiagnosticStatus &status)
+{
+    diagnostic_msgs::DiagnosticArray diag_msg;
+    diag_msg.header.frame_id="base_link";
+    diag_msg.header.stamp=ros::Time::now();
+
+    diag_msg.status.push_back(status);
+
+    diagnos_pub_.publish(diag_msg);
+}
+
 void RicBoard::onLocationMsg(const ric_interface_ros::Location::ConstPtr &msg)
 {
-    sensor_msgs::NavSatFix gps_msg;
-    gps_msg.header.frame_id = "base_link";
-    gps_msg.latitude = msg->lat;
-    gps_msg.longitude = msg->lon;
-    gps_msg.altitude = msg->alt;
-    gps_msg.status.service = sensor_msgs::NavSatStatus::SERVICE_GPS;
-    // if message arrived from ric, it must have valid fix
-    gps_msg.status.status = sensor_msgs::NavSatStatus::STATUS_FIX;
+    diagnostic_msgs::DiagnosticStatus diag_stat;
+    diag_stat.name = "gps";
+    diag_stat.hardware_id = std::to_string(msg->id);
 
-    gps_pub_.publish(gps_msg);
+    if (msg->status == ric::protocol::package::Status::READ_FAIL)
+    {
+        diag_stat.level = diagnostic_msgs::DiagnosticStatus::ERROR;
+        diag_stat.message = "failed to read GPS";
+    }
+    else if (msg->status == ric::protocol::package::Status::OK)
+    {
+        sensor_msgs::NavSatFix gps_msg;
+        gps_msg.header.frame_id = "base_link";
+        gps_msg.latitude = msg->lat;
+        gps_msg.longitude = msg->lon;
+        gps_msg.altitude = msg->alt;
+        gps_msg.status.service = sensor_msgs::NavSatStatus::SERVICE_GPS;
+        // if message arrived from ric, it must have
+        // valid fix (otherwise ric won't send it)
+        gps_msg.status.status = sensor_msgs::NavSatStatus::STATUS_FIX;
+
+        gps_pub_.publish(gps_msg);
+
+        diag_stat.level = diagnostic_msgs::DiagnosticStatus::OK;
+    }
+
+    sendDiagnosticsMsg(diag_stat);
 }
 
 void RicBoard::onBatteryMsg(const ric_interface_ros::Battery::ConstPtr &msg)
 {
-    sensor_msgs::BatteryState batt_msg;
-    batt_msg.header.frame_id = "base_link";
-    batt_msg.voltage = msg->value;
-    batt_msg.capacity = 11.1;
-    batt_msg.percentage = ((msg->value - BATT_MIN)  / (BATT_MAX - BATT_MIN)) * 100.0;
-    batt_msg.power_supply_technology = sensor_msgs::BatteryState::POWER_SUPPLY_TECHNOLOGY_LION;
-    batt_msg.location = "bottom of the robot";
-    for (int i=0; i<BATT_CELLS; i++)
-        batt_msg.cell_voltage.push_back(msg->value / BATT_CELLS);
+    diagnostic_msgs::DiagnosticStatus diag_stat;
 
-    battery_pub_.publish(batt_msg);
+    diag_stat.name = "battery";
+    diag_stat.hardware_id = std::to_string(msg->id);
+
+    diagnostic_msgs::KeyValue key_val;
+    key_val.key = "voltage";
+    key_val.value = std::to_string(msg->value);
+    diag_stat.values.push_back(key_val);
+
+    if (msg->status == ric::protocol::package::Status::READ_FAIL)
+    {
+        diag_stat.message = "failed to read battery";
+        diag_stat.level = diagnostic_msgs::DiagnosticStatus::ERROR;
+    }
+    else if (msg->status == ric::protocol::package::Status::READ_WARN)
+    {
+        diag_stat.message = "low battery";
+        diag_stat.level = diagnostic_msgs::DiagnosticStatus::WARN;
+    }
+    else if (msg->status == ric::protocol::package::Status::OK)
+    {
+        sensor_msgs::BatteryState batt_msg;
+        batt_msg.header.frame_id = "base_link";
+        batt_msg.voltage = msg->value;
+        batt_msg.capacity = 11.1;
+        batt_msg.percentage = ((msg->value - BATT_MIN)  / (BATT_MAX - BATT_MIN)) * 100.0;
+        batt_msg.power_supply_technology = sensor_msgs::BatteryState::POWER_SUPPLY_TECHNOLOGY_LION;
+        batt_msg.location = "bottom of the robot";
+        for (int i=0; i<BATT_CELLS; i++)
+            batt_msg.cell_voltage.push_back(msg->value / BATT_CELLS);
+
+        battery_pub_.publish(batt_msg);
+
+        diag_stat.level = diagnostic_msgs::DiagnosticStatus::OK;
+    }
+
+    sendDiagnosticsMsg(diag_stat);
 }
 
 void RicBoard::onLoggerMsg(const ric_interface_ros::Logger::ConstPtr& msg)
@@ -252,27 +307,50 @@ void RicBoard::onLoggerMsg(const ric_interface_ros::Logger::ConstPtr& msg)
 
 void RicBoard::onEncoderMsg(const ric_interface_ros::Encoder::ConstPtr& msg)
 {
-    double new_pos = ticksToRads((double)msg->ticks);
-    int encoder_id = msg->id;
+    diagnostic_msgs::DiagnosticStatus diag_stat;
+    diag_stat.hardware_id = std::to_string(msg->id);
 
-    switch (encoder_id)
+    double new_pos = ticksToRads((double)msg->ticks);
+
+    switch (msg->id)
     {
         case WHEEL_FRONT_RIGHT_ID:
+            diag_stat.name = "front_right_motor";
             updateWheelPosition(front_right_wheel_, new_pos);
             break;
 
         case WHEEL_FRONT_LEFT_ID:
+            diag_stat.name = "front_left_motor";
             updateWheelPosition(front_left_wheel_, new_pos);
             break;
 
         case WHEEL_REAR_RIGHT_ID:
+            diag_stat.name = "rear_right_motor";
             updateWheelPosition(rear_right_wheel_, new_pos);
             break;
 
         case WHEEL_REAR_LEFT_ID:
+            diag_stat.name = "rear_left_motor";
             updateWheelPosition(rear_left_wheel_, new_pos);
             break;
     }
+
+    diagnostic_msgs::KeyValue key_val;
+    key_val.key = "ticks";
+    key_val.value = std::to_string(msg->ticks);
+    diag_stat.values.push_back(key_val);
+
+    if (msg->status == ric::protocol::package::Status::READ_FAIL)
+    {
+        diag_stat.message = "failed to read encoder";
+        diag_stat.level = diagnostic_msgs::DiagnosticStatus::ERROR;
+    }
+    else if (msg->status == ric::protocol::package::Status::OK)
+    {
+        diag_stat.level = diagnostic_msgs::DiagnosticStatus::OK;
+    }
+
+    sendDiagnosticsMsg(diag_stat);
 }
 
 void RicBoard::speakMsg(const std::string &msg)

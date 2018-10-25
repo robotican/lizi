@@ -46,6 +46,7 @@
 #include <ric_interface_ros/Logger.h>
 #include <ric_interface_ros/Location.h>
 #include <ric_interface_ros/Battery.h>
+#include <ric_interface/protocol.h>
 #include <diagnostic_msgs/DiagnosticStatus.h>
 #include <diagnostic_msgs/DiagnosticArray.h>
 #include <ros/ros.h>
@@ -165,6 +166,8 @@ private:
     static void updateWheelPosition(wheel &wheel, double new_pos);
 
     void onControlLoopTimer(const ros::TimerEvent &);
+
+    void sendDiagnosticsMsg(const diagnostic_msgs::DiagnosticStatus & status);
 
 
 public:

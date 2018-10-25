@@ -1,0 +1,30 @@
+pub_rate: 1.0 # Optional
+analyzers:
+  motors:
+    type: GenericAnalyzer
+    path: Motors
+    contains: 'motor'
+    num_items: 4 #make sure we have an exact number of diagnostic items.
+
+  power:
+    type: GenericAnalyzer
+    path: Battery
+    name: 'battery'
+    num_items: 1 #make sure we have an exact number of diagnostic items.
+
+  sensors:
+    type: AnalyzerGroup
+    path: Sensors
+
+    analyzers:
+      imu:
+        type: GenericAnalyzer
+        path: IMU
+        name: 'imu'
+        num_items: 1 #make sure we have an exact number of diagnostic items.
+
+      gps:
+        type: GenericAnalyzer
+        path: GPS
+        name: 'gps'
+        num_items: 1 #make sure we have an exact number of diagnostic items.

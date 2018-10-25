@@ -16,6 +16,7 @@
     <arg name="cam" default="false"/>
     <arg name="depth_cam" default="false"/>
     <arg name="lidar" default="false"/>
+    <arg name="diagnos" default="true"/>
     
     <!--   navigation and mapping   -->
     <arg name="gmapping" default="false"/>
@@ -31,6 +32,10 @@
     <!--<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" > 
         <param name="use_gui" value="false"/>
     </node>-->
+    
+    <group if="$(arg diagnos)">
+        <include file="$(find lizi_hw)/launch/diagnostics.launch" />
+    </group>
     
     <group if="$(arg amcl)">
         <include file="$(find lizi_control)/launch/lizi_controllers.launch" >
