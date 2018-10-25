@@ -120,13 +120,17 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
     // motors over voltage protection
     double protect_err_thresh = 0.9;
     double protect_time_thresh = 5.0;
+    int protect_output_thresh = 200;
     bool enable_protect = true;
     nh.getParam("enable_motors_protection", enable_protect);
     nh.getParam("protection_error_threshold", protect_err_thresh);
     nh.getParam("protection_time_threshold", protect_time_thresh);
+    nh.getParam("protection_output_threshold", protect_output_thresh);
 
     if (enable_protect)
-        wheels_control_.enableOVProtection(protect_time_thresh, protect_err_thresh);
+        wheels_control_.enableOVProtection(protect_time_thresh,
+                                           protect_err_thresh,
+                                           protect_output_thresh);
 
     vel_delta_timer_ = nh.createTimer(ros::Duration(control_loop_interval), &RicBoard::onControlLoopTimer, this);
 

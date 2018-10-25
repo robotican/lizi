@@ -51,7 +51,7 @@ struct ov_protection_settings
     bool enable = false;
     float error_thresh = 0;
     float time_thresh = 0;
-    bool trigger = false;
+    int output_thresh = 0;
 };
 
 class WheelsControl
@@ -76,10 +76,13 @@ public:
     std::vector<wheel*> getWheels() { return wheels_; }
 
     // enable over voltage protection. if error > error_thresh and
-    // time > time_thresh, then throw runtime exception
+    // time > time_thresh and output > output_thresh, then throw runtime exception
     // @param time_thresh - in seconds
     // @param error_thresh - percentage 0-1
-    void enableOVProtection(float time_thresh, float error_thresh);
+    // @param output_thresh - 0-500
+    void enableOVProtection(float time_thresh,
+                            float error_thresh,
+                            int output_thresh);
 
 };
 

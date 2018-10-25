@@ -69,7 +69,7 @@ void WheelsControl::update(const ros::Duration& dt)
 {
     lizi_hw::WheelsPID pid_msg;
 
-    bool error_exceeded_thresh = false;
+    bool trigger_protection = false;
 
     for (int i=0; i < pids_.size(); i++)
     {
@@ -79,8 +79,8 @@ void WheelsControl::update(const ros::Duration& dt)
 
         // error thresh is relative to command
         float err_thresh_val = protect.error_thresh * command;
-        if (error > err_thresh_val)
-            error_exceeded_thresh = true;
+        if (error > err_thresh_val && command > protect.output_thresh)
+            trigger_protection = true;
 
         wheels_[i]->command_effort = pids_[i].computeCommand(error, dt);
 
@@ -97,7 +97,7 @@ void WheelsControl::update(const ros::Duration& dt)
         pid_msg.pids.push_back(pid_data);
     }
 
-    if (!error_exceeded_thresh)
+    if (!trigger_protection)
         protect.start_time = ros::Time::now();
     else
     {
@@ -105,19 +105,24 @@ void WheelsControl::update(const ros::Duration& dt)
              ros::Duration(protect.time_thresh))
         {
             if (protect.enable)
-                throw std::runtime_error("motor error exceeded max value for more than time threshold");
+                throw std::runtime_error("motor protection signal");
         }
     }
 
     pid_data_pub_.publish(pid_msg);
 }
 
-void WheelsControl::enableOVProtection(float time_thresh, float error_thresh)
+void WheelsControl::enableOVProtection(float time_thresh,
+                                       float error_thresh,
+                                       int output_thresh)
 {
     if (error_thresh < 0 || error_thresh > 1)
         throw std::invalid_argument("error_thresh param must be between 0 and 1");
+    if (output_thresh < 0 || output_thresh > 500)
+        throw std::invalid_argument("output_thresh param must be between 0 and 500");
     protect.enable = true;
     protect.time_thresh = time_thresh;
     protect.error_thresh = error_thresh;
+    protect.output_thresh = output_thresh;
     protect.start_time = ros::Time::now();
 }
