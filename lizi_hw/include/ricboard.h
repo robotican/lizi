@@ -144,6 +144,8 @@ private:
 
     double ric_servo_bias_ = 0;
 
+    double control_loop_interval_ = 0;
+
     ros::Time prev_lpf_time_;
 
     void onKeepAliveTimeout(const ros::TimerEvent &event);

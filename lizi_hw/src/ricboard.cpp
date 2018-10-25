@@ -114,8 +114,8 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
 
     nh.getParam("ric_servo_bias", ric_servo_bias_);
 
-    double control_loop_interval = 0.05;
-    nh.getParam("control_loop_interval", control_loop_interval);
+    control_loop_interval_ = 0.006;
+    nh.getParam("control_loop_interval", control_loop_interval_);
 
     // motors over voltage protection
     double protect_err_thresh = 0.9;
@@ -139,14 +139,14 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
 
     // git controllers time to go up before starting control loop
     ros::Duration(1).sleep();
-    vel_delta_timer_ = nh.createTimer(ros::Duration(control_loop_interval), &RicBoard::onControlLoopTimer, this);
+    vel_delta_timer_ = nh.createTimer(ros::Duration(control_loop_interval_), &RicBoard::onControlLoopTimer, this);
 
     ROS_INFO("lizi hardware interface node initialization completed");
 }
 
 void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
 {
-    ros::Duration delta_t(0.006);//ros::Time::now() - prev_lpf_time_;
+    ros::Duration delta_t(control_loop_interval_);
 
     for (auto &wheel : wheels_control_.getWheels())
     {
