@@ -79,7 +79,7 @@ void WheelsControl::update(const ros::Duration& dt)
 
         // error thresh is relative to command
         float err_thresh_val = protect.error_thresh * command;
-        if (abs(error) > abs(err_thresh_val) && abs(command) > protect.output_thresh)
+        if (fabs(error) > fabs(err_thresh_val) && fabs(command) > protect.output_thresh)
             trigger_protection = true;
 
         wheels_[i]->command_effort = pids_[i].computeCommand(error, dt);
