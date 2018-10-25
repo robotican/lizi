@@ -132,9 +132,13 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
                                            protect_err_thresh,
                                            protect_output_thresh);
 
+    prev_lpf_time_ = ros::Time::now();
+
+    // git controllers time to go up before starting control loop
+    ros::Duration(3).sleep();
     vel_delta_timer_ = nh.createTimer(ros::Duration(control_loop_interval), &RicBoard::onControlLoopTimer, this);
 
-    prev_lpf_time_ = ros::Time::now();
+    ROS_INFO("lizi hardware interface node initialization completed");
 }
 
 void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
