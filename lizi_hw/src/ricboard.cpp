@@ -131,6 +131,9 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
         wheels_control_.enableOVProtection(protect_time_thresh,
                                            protect_err_thresh,
                                            protect_output_thresh);
+    else
+        ROS_WARN("Over voltage protection disabled. "
+                 "Risk of motor malfunction in case of high voltage");
 
     prev_lpf_time_ = ros::Time::now();
 
