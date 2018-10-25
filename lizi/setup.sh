@@ -36,24 +36,26 @@ sudo apt-get -y upgrade
 # from this point on, exit and notify immediately if a command exits with a non-zero status
 set -eb
 
-sudo apt-get -y install ros-kinetic-controller-manager 
-sudo apt-get -y install ros-kinetic-control-toolbox  
-sudo apt-get -y install ros-kinetic-transmission-interface 
-sudo apt-get -y install ros-kinetic-joint-limits-interface 
-sudo apt-get -y install ros-kinetic-ros-controllers 
-sudo apt-get -y install ros-kinetic-ros-control 
-sudo apt-get -y install ros-kinetic-move-base
-sudo apt-get -y install ros-kinetic-navigation
-sudo apt-get -y install ros-kinetic-hector-slam
-sudo apt-get -y install ros-kinetic-gmapping
-sudo apt-get -y install ros-kinetic-pid
-sudo apt-get -y install ros-kinetic-ar-track-alvar
-sudo apt-get -y install ros-kinetic-serial
-sudo apt-get -y install ros-kinetic-robot-localization
-sudo apt-get -y install ros-kinetic-trac-ik ros-kinetic-moveit-kinematics 
-sudo apt-get -y install ros-kinetic-urg-node
-sudo apt-get -y install ros-kinetic-usb-cam
-sudo apt-get -y install espeak espeak-data libespeak-dev 
+sudo apt-get -y install ros-kinetic-controller-manager \
+ros-kinetic-control-toolbox \
+ros-kinetic-transmission-interface \
+ros-kinetic-joint-limits-interface \
+ros-kinetic-ros-controllers \
+ros-kinetic-ros-control \
+ros-kinetic-move-base \
+ros-kinetic-navigation \
+ros-kinetic-hector-slam \
+ros-kinetic-gmapping \
+ros-kinetic-pid \
+ros-kinetic-ar-track-alvar \
+ros-kinetic-serial \
+ros-kinetic-robot-localization \
+ros-kinetic-trac-ik ros-kinetic-moveit-kinematics  \
+ros-kinetic-urg-node \
+ros-kinetic-usb-cam \
+ros-kinetic-rqt-robot-monitor \
+ros-kinetic-hector-gazebo-plugins \
+espeak espeak-data libespeak-dev
 
 DIFF_SLIP_CONTROLLER_V="1.0.0"
 wget https://github.com/robotican/diff_drive_slip_controller/archive/V"$DIFF_SLIP_CONTROLLER_V".tar.gz
@@ -87,8 +89,6 @@ rm V"$MOBILICAN_RULES_V".tar.gz
 
 sudo dpkg -i $CATKIN_WS_SRC/lizi/lizi/ric_driver/ric-interface.deb
 
-sudo apt-get -y install ros-kinetic-hector-gazebo-plugins
-
 printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 
 # realsense depth camera 
@@ -99,8 +99,7 @@ rm 2.0.3.tar.gz
 wget https://github.com/IntelRealSense/librealsense/archive/v2.10.3.tar.gz
 tar -xvzf v2.10.3.tar.gz
 rm v2.10.3.tar.gz
-sudo apt-get -y install libusb-1.0-0-dev pkg-config libgtk-3-dev
-sudo apt-get -y install libglfw3-dev                                                                                                                                                
+sudo apt-get -y install libusb-1.0-0-dev pkg-config libgtk-3-dev libglfw3-dev                                                                                                                                                
 cd librealsense-2.10.3                                                                                                                                                               
 mkdir build && cd build               
 cmake ../  

@@ -60,6 +60,7 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
     gps_pub_ = nh.advertise<sensor_msgs::NavSatFix>("gps", 10);
     battery_pub_ = nh.advertise<sensor_msgs::BatteryState>("battery", 10);
     espeak_pub_ = nh.advertise<std_msgs::String>("/espeak_node/speak_line", 10);
+    diagnos_pub_ = nh.advertise<std_msgs::String>("/diagnostic", 10);
 
     terminate_ric_client_ = nh.serviceClient<std_srvs::Trigger>("terminate_ric");
 

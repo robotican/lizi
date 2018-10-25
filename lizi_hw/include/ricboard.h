@@ -46,6 +46,8 @@
 #include <ric_interface_ros/Logger.h>
 #include <ric_interface_ros/Location.h>
 #include <ric_interface_ros/Battery.h>
+#include <diagnostic_msgs/DiagnosticStatus.h>
+#include <diagnostic_msgs/DiagnosticArray.h>
 #include <ros/ros.h>
 #include <std_srvs/Trigger.h>
 #include <tf/tf.h>
@@ -124,6 +126,7 @@ private:
             gps_pub_,
             battery_pub_;
     ros::Publisher espeak_pub_;
+    ros::Publisher diagnos_pub_;
 
     ros::ServiceClient terminate_ric_client_;
 
