@@ -37,7 +37,6 @@
 #define LIZI_HW_RICBOARD_H
 
 #include <ric_interface_ros/Encoder.h>
-#include <ric_interface_ros/Error.h>
 #include <ric_interface_ros/Keepalive.h>
 #include <ric_interface_ros/Orientation.h>
 #include <ric_interface_ros/Proximity.h>
@@ -110,7 +109,6 @@ private:
     bool first_keepalive_ = true;
 
     ros::Subscriber encoder_sub_,
-                    error_sub_,
                     keepalive_sub_,
                     orientation_sub_,
                     proximity_sub_,
@@ -155,7 +153,6 @@ private:
     void onKeepAliveTimeout(const ros::TimerEvent &event);
 
     void onEncoderMsg(const ric_interface_ros::Encoder::ConstPtr& msg);
-    void onErrorMsg(const ric_interface_ros::Error::ConstPtr& msg);
     void onKeepaliveMsg(const ric_interface_ros::Keepalive::ConstPtr& msg);
     void onOrientationMsg(const ric_interface_ros::Orientation::ConstPtr& msg);
     void onProximityMsg(const ric_interface_ros::Proximity::ConstPtr& msg);

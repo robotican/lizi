@@ -42,7 +42,6 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
 
     /* ric_interface_ros subscribers */
     encoder_sub_ = nh.subscribe("ric/encoder", 10, &RicBoard::onEncoderMsg, this);
-    error_sub_ = nh.subscribe("ric/error", 10, &RicBoard::onErrorMsg, this);
     keepalive_sub_ = nh.subscribe("ric/keepalive", 10, &RicBoard::onKeepaliveMsg, this);
     orientation_sub_ = nh.subscribe("ric/orientation", 10, &RicBoard::onOrientationMsg, this);
     proximity_sub_ = nh.subscribe("ric/proximity", 10, &RicBoard::onProximityMsg, this);
@@ -366,12 +365,6 @@ void RicBoard::updateWheelPosition(wheel &wheel, double new_pos)
         new_pos *= -1;
 
     wheel.position = new_pos;
-}
-
-void RicBoard::onErrorMsg(const ric_interface_ros::Error::ConstPtr& msg)
-{
-    ROS_WARN("component of type %i and id %i reported an error code %i",
-             msg->comp_type, msg->comp_id, msg->code);
 }
 
 void RicBoard::onKeepaliveMsg(const ric_interface_ros::Keepalive::ConstPtr& msg)
