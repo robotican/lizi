@@ -87,12 +87,15 @@ wget https://github.com/robotican/mobilican_rules/archive/V"$MOBILICAN_RULES_V".
 tar -xvzf V"$MOBILICAN_RULES_V".tar.gz
 rm V"$MOBILICAN_RULES_V".tar.gz
 
-sudo dpkg -i $CATKIN_WS_SRC/lizi/lizi/ric_driver/ric-interface.deb
+#install ric_interface deb
+cd $CATKIN_WS_SRC/lizi/ric-interface-ros-$RIC_INTERFACE_ROS_V/ric_interface_deb/
+sudo dpkg -i ric-interface.deb
 
 printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 
 # realsense depth camera 
 printf "${WHITE_TXT}\nInstalling depth camera...\n${NO_COLOR}"
+cd $CATKIN_WS_SRC/lizi/
 wget https://github.com/intel-ros/realsense/archive/2.0.3.tar.gz
 tar -xvzf 2.0.3.tar.gz
 rm 2.0.3.tar.gz     

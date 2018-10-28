@@ -165,7 +165,7 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
         wheels_control_.update(ros::Duration(delta_t));
 
     } catch (std::runtime_error) {
-       // terminateWithMessage("motors over voltage protection. shutting down", true);
+        terminateWithMessage("motors over voltage protection. shutting down", true);
     }
 
     prev_lpf_time_ = ros::Time::now();
@@ -174,7 +174,6 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
     {
         if (w->reverse_command)
             w->command_effort *= -1;
-
 
         // map control loop values to servo values
         double servo_command = w->command_effort;
