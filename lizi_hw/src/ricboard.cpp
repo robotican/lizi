@@ -138,7 +138,8 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
 
     prev_lpf_time_ = ros::Time::now();
 
-    // git controllers time to go up before starting control loop
+    // give controllers time to go up before starting control loop
+    // this meant to prevent abrupt wheels movement
     ros::Duration(1).sleep();
     vel_delta_timer_ = nh.createTimer(ros::Duration(control_loop_interval_), &RicBoard::onControlLoopTimer, this);
 
@@ -175,10 +176,11 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
         if (w->reverse_command)
             w->command_effort *= -1;
 
-        // map control loop values to servo values
         double servo_command = w->command_effort;
 
-        // add bias if needed
+        // Add bias if needed. This is neccessary because lizi motors
+        // only start moving after a certain command threshold. Ideally
+        // the bias = |cmd_thresh - neutral_cmd|
         if (servo_command > 0)
             servo_command += ric_servo_bias_;
         else if (servo_command < 0)
@@ -233,8 +235,7 @@ void RicBoard::onLocationMsg(const ric_interface_ros::Location::ConstPtr &msg)
         gps_msg.longitude = msg->lon;
         gps_msg.altitude = msg->alt;
         gps_msg.status.service = sensor_msgs::NavSatStatus::SERVICE_GPS;
-        // if message arrived from ric, it must have
-        // valid fix (otherwise ric won't send it)
+        // if valid(OK) message arrived from ric, it must have valid fix
         gps_msg.status.status = sensor_msgs::NavSatStatus::STATUS_FIX;
 
         gps_pub_.publish(gps_msg);
@@ -496,11 +497,6 @@ void RicBoard::read(const ros::Time &now)
 void RicBoard::write(const ros::Time &now, const ros::Duration& duration)
 {
 
-}
-
-double RicBoard::map(double value, double in_min, double in_max, double out_min, double out_max)
-{
-    return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 double RicBoard::ticksToRads(double ticks)

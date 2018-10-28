@@ -6,7 +6,7 @@
     
     <!-- gazebo -->
     <arg name="gazebo" default="false" doc="execute lizi inside gazebo sim"/>
-    <arg name="world_name" default="worlds/empty.world"/> 
+    <arg name="world" default="worlds/empty.world"/> 
     <arg name="x" default="0.0"/>
     <arg name="y" default="0.0"/>
     <arg name="z" default="0.0"/>
@@ -28,10 +28,6 @@
     <arg name="robot_localization" default="false"/>
         
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="false" output="screen"/>
-    
-    <!--<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" > 
-        <param name="use_gui" value="false"/>
-    </node>-->
     
     <group if="$(arg diagnos)">
         <include file="$(find lizi_hw)/launch/diagnostics.launch" />
@@ -87,7 +83,7 @@
                 lidar:=true" />
         
 	<include file="$(find gazebo_ros)/launch/empty_world.launch">	    
-              <arg name="world_name" value="$(arg world_name)"/>
+              <arg name="world" value="$(arg world)"/>
 	      <arg name="gui" value="true"/>	     
 	</include>
 

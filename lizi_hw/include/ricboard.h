@@ -177,12 +177,9 @@ public:
     void registerHandles(hardware_interface::JointStateInterface &joint_state_interface,
                          hardware_interface::VelocityJointInterface& vel_joint_interface);
 
-    // write controllers commands to ricboard
     void write(const ros::Time &now, const ros::Duration& duration);
-
     void read(const ros::Time &now);
 
-    static double map(double value, double in_min, double in_max, double out_min, double out_max);
     static double ticksToRads(double rpm);
 
     void speakMsg(const std::string& msg);
