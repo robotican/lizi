@@ -383,44 +383,61 @@ void RicBoard::onKeepaliveMsg(const ric_interface_ros::Keepalive::ConstPtr& msg)
 
 void RicBoard::onOrientationMsg(const ric_interface_ros::Orientation::ConstPtr& msg)
 {
-    /* publish imu */
-    sensor_msgs::Imu imu_msg;
-    imu_msg.header.stamp = ros::Time::now();
-    imu_msg.header.frame_id = "base_footprint";
+    diagnostic_msgs::DiagnosticStatus diag_stat;
+    diag_stat.name = "imu";
+    diag_stat.hardware_id = std::to_string(msg->id);
 
-    double roll, pitch, yaw;
-    pitch = -msg->roll;
-    roll = -msg->pitch;
-    yaw = msg->yaw - M_PI / 2;
+    if (msg->status == ric::protocol::package::Status::INIT_FAIL)
+    {
+        diag_stat.level = diagnostic_msgs::DiagnosticStatus::ERROR;
+        diag_stat.message = "failed to initialize and read from IMU";
+    }
+    else if (msg->status == ric::protocol::package::Status::OK)
+    {
+        /* publish imu */
+        sensor_msgs::Imu imu_msg;
+        imu_msg.header.stamp = ros::Time::now();
+        imu_msg.header.frame_id = "base_footprint";
 
-    //wrap to PI
-    if (yaw > M_PI )
-        yaw -= 2 * M_PI;
-    else if (yaw < -M_PI)
-        yaw += 2 * M_PI;
+        double roll, pitch, yaw;
+        pitch = -msg->roll;
+        roll = -msg->pitch;
+        yaw = msg->yaw - M_PI / 2;
 
-    tf::Quaternion orientation_q =
-            tf::createQuaternionFromRPY(roll, pitch, yaw);
+        //wrap to PI
+        if (yaw > M_PI )
+            yaw -= 2 * M_PI;
+        else if (yaw < -M_PI)
+            yaw += 2 * M_PI;
 
-    imu_msg.orientation.x = orientation_q.x();
-    imu_msg.orientation.y = orientation_q.y();
-    imu_msg.orientation.z = orientation_q.z();
-    imu_msg.orientation.w = orientation_q.w();
-    imu_msg.angular_velocity.x = -1 * msg->gyro_y;
-    imu_msg.angular_velocity.y = -1 * msg->gyro_x;
-    imu_msg.angular_velocity.z = -1 * msg->gyro_z;
-    imu_msg.linear_acceleration.x = msg->accl_x * G_FORCE + ACCEL_OFFSET_X;
-    imu_msg.linear_acceleration.y = msg->accl_y * G_FORCE - ACCEL_OFFSET_Y;
-    imu_msg.linear_acceleration.z = msg->accl_z * G_FORCE - ACCEL_OFFSET_Z;
-    imu_pub_.publish(imu_msg);
+        tf::Quaternion orientation_q =
+                tf::createQuaternionFromRPY(roll, pitch, yaw);
 
-    sensor_msgs::MagneticField mag_msg;
-    mag_msg.header.stamp = ros::Time::now();
-    mag_msg.header.frame_id = "base_link";
-    mag_msg.magnetic_field.x = msg->mag_x;
-    mag_msg.magnetic_field.y = msg->mag_y;
-    mag_msg.magnetic_field.z = msg->mag_z;
-    mag_pub_.publish(mag_msg);
+        imu_msg.orientation.x = orientation_q.x();
+        imu_msg.orientation.y = orientation_q.y();
+        imu_msg.orientation.z = orientation_q.z();
+        imu_msg.orientation.w = orientation_q.w();
+        imu_msg.angular_velocity.x = -1 * msg->gyro_y;
+        imu_msg.angular_velocity.y = -1 * msg->gyro_x;
+        imu_msg.angular_velocity.z = -1 * msg->gyro_z;
+        imu_msg.linear_acceleration.x = msg->accl_x * G_FORCE + ACCEL_OFFSET_X;
+        imu_msg.linear_acceleration.y = msg->accl_y * G_FORCE - ACCEL_OFFSET_Y;
+        imu_msg.linear_acceleration.z = msg->accl_z * G_FORCE - ACCEL_OFFSET_Z;
+        imu_pub_.publish(imu_msg);
+
+        sensor_msgs::MagneticField mag_msg;
+        mag_msg.header.stamp = ros::Time::now();
+        mag_msg.header.frame_id = "base_link";
+        mag_msg.magnetic_field.x = msg->mag_x;
+        mag_msg.magnetic_field.y = msg->mag_y;
+        mag_msg.magnetic_field.z = msg->mag_z;
+        mag_pub_.publish(mag_msg);
+
+        diag_stat.level = diagnostic_msgs::DiagnosticStatus::OK;
+    }
+
+    sendDiagnosticsMsg(diag_stat);
+
 }
 
 void RicBoard::onProximityMsg(const ric_interface_ros::Proximity::ConstPtr& msg)
