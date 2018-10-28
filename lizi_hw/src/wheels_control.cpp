@@ -77,6 +77,10 @@ void WheelsControl::update(const ros::Duration& dt)
         double velocity = wheels_[i]->velocity;
         double error = command - velocity;
 
+        // round tiny errors to 0
+        if (fabs(error) < 0.0001)
+            error = 0;
+
         // error thresh is relative to command
         float err_thresh_val = protect.error_thresh * command;
         if (fabs(error) > fabs(err_thresh_val) && fabs(command) > protect.output_thresh)

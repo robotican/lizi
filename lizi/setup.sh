@@ -62,7 +62,7 @@ wget https://github.com/robotican/diff_drive_slip_controller/archive/V"$DIFF_SLI
 tar -xvzf V"$DIFF_SLIP_CONTROLLER_V".tar.gz
 rm V"$DIFF_SLIP_CONTROLLER_V".tar.gz
 
-RIC_INTERFACE_ROS_V="1.0.3"
+RIC_INTERFACE_ROS_V="1.0.4"
 wget https://github.com/robotican/ric_interface_ros/archive/V"$RIC_INTERFACE_ROS_V".tar.gz
 tar -xvzf V"$RIC_INTERFACE_ROS_V".tar.gz
 rm V"$RIC_INTERFACE_ROS_V".tar.gz
@@ -88,14 +88,14 @@ tar -xvzf V"$MOBILICAN_RULES_V".tar.gz
 rm V"$MOBILICAN_RULES_V".tar.gz
 
 #install ric_interface deb
-cd $CATKIN_WS_SRC/lizi/ric-interface-ros-$RIC_INTERFACE_ROS_V/ric_interface_deb/
+cd $CATKIN_WS_SRC/ric_interface_ros-$RIC_INTERFACE_ROS_V/ric_interface_deb/
 sudo dpkg -i ric-interface.deb
 
 printf "${GREEN_TXT}Done.\n\n${NO_COLOR}"
 
 # realsense depth camera 
 printf "${WHITE_TXT}\nInstalling depth camera...\n${NO_COLOR}"
-cd $CATKIN_WS_SRC/lizi/
+cd $CATKIN_WS_SRC/
 wget https://github.com/intel-ros/realsense/archive/2.0.3.tar.gz
 tar -xvzf 2.0.3.tar.gz
 rm 2.0.3.tar.gz     
