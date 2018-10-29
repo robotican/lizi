@@ -135,8 +135,6 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
         ROS_WARN("Over voltage protection disabled. "
                  "Risk of motor malfunction in case of high voltage");
 
-    prev_lpf_time_ = ros::Time::now();
-
     // give controllers time to go up before starting control loop
     // this meant to prevent abrupt wheels movement
     ros::Duration(1).sleep();
@@ -147,13 +145,19 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
 
 void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
 {
-    ros::Duration delta_t(control_loop_interval_);
+double delta_t =    control_loop_interval_;
 
     for (auto &wheel : wheels_control_.getWheels())
     {
         double delta_x = wheel->position - wheel->last_position;
 
-        wheel->raw_velocity = delta_x / delta_t.toSec();
+        wheel->raw_velocity = delta_x / delta_t;
+
+//if (wheel->raw_velocity != 0)
+//{
+//ROS_ERROR("%s raw vel: %f, delta_t: %f, delta_x: %f", wheel->joint_name.c_str(), wheel->raw_velocity, delta_t, delta_x);
+//}
+
 
         wheel->last_position = wheel->position;
     }
@@ -167,8 +171,6 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
     } catch (std::runtime_error) {
         terminateWithMessage("motors over voltage protection. shutting down", true);
     }
-
-    prev_lpf_time_ = ros::Time::now();
 
     for (wheel *w : wheels_control_.getWheels())
     {
@@ -309,7 +311,10 @@ void RicBoard::onEncoderMsg(const ric_interface_ros::Encoder::ConstPtr& msg)
     diagnostic_msgs::DiagnosticStatus diag_stat;
     diag_stat.hardware_id = std::to_string(msg->id);
 
-    double new_pos = ticksToRads((double)msg->ticks);
+if (msg->ticks != 0)
+	ROS_ERROR("id: %d, ticks: %lu", msg->id, msg->ticks);
+
+    double new_pos = ticksToRads(msg->ticks);
 
     switch (msg->id)
     {
@@ -509,7 +514,7 @@ void RicBoard::write(const ros::Time &now, const ros::Duration& duration)
 
 }
 
-double RicBoard::ticksToRads(double ticks)
+double RicBoard::ticksToRads(long ticks)
 {
-    return (ticks / ENC_TICKS_PER_ROUND) * 2 * M_PI;
+    return (ticks / ENC_TICKS_PER_ROUND) * 2.0 * M_PI;
 }

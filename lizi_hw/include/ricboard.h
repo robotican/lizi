@@ -177,7 +177,7 @@ public:
     void write(const ros::Time &now, const ros::Duration& duration);
     void read(const ros::Time &now);
 
-    static double ticksToRads(double rpm);
+    static double ticksToRads(long ticks);
 
     void speakMsg(const std::string& msg);
 
