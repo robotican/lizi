@@ -153,11 +153,11 @@ void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
     {
         double delta_x = wheel->position - wheel->last_position;
 
-        wheel->last_position = wheel->position;
-
         wheel->raw_velocity = delta_x / delta_t.toSec();
+
         wheel->last_position = wheel->position;
     }
+
     vels_lpf_.update();
 
     try{

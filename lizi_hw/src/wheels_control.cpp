@@ -97,6 +97,8 @@ void WheelsControl::update(const ros::Duration& dt)
         pid_data.command = command;
         pid_data.error = error;
         pid_data.output = wheels_[i]->command_effort;
+        pid_data.raw_velocity = wheels_[i]->raw_velocity;
+        pid_data.filtered_velocity = wheels_[i]->velocity;
 
         pid_msg.pids.push_back(pid_data);
     }
