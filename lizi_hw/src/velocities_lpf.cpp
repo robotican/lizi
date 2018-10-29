@@ -40,7 +40,6 @@
 
 void VelocitiesLpf::init(ros::NodeHandle &nh, std::vector<wheel*> & wheels)
 {
-
     wheels_ = wheels;
     // initiate pid controls with pid from param server
     for(auto & wheel : wheels)
@@ -72,7 +71,7 @@ void VelocitiesLpf::update()
 {
     for (int i=0; i < filters_.size(); i++)
     {
-        double filtered_vel = filters_[i].filter(wheels_[i]->raw_velocity);
+        double filtered_vel = filters_[i].filter(wheels_[i]->raw_velocity, ZERO_THRESH);
         wheels_[i]->velocity = filtered_vel;
     }
 }

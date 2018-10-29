@@ -145,21 +145,19 @@ RicBoard::RicBoard(ros::NodeHandle &nh)
 
 void RicBoard::onControlLoopTimer(const ros::TimerEvent &)
 {
-double delta_t =    control_loop_interval_;
+    double delta_t = control_loop_interval_;
 
     for (auto &wheel : wheels_control_.getWheels())
     {
+        wheel->lock.lock();
+
         double delta_x = wheel->position - wheel->last_position;
 
         wheel->raw_velocity = delta_x / delta_t;
 
-//if (wheel->raw_velocity != 0)
-//{
-//ROS_ERROR("%s raw vel: %f, delta_t: %f, delta_x: %f", wheel->joint_name.c_str(), wheel->raw_velocity, delta_t, delta_x);
-//}
-
-
         wheel->last_position = wheel->position;
+
+        wheel->lock.unlock();
     }
 
     vels_lpf_.update();
@@ -311,9 +309,6 @@ void RicBoard::onEncoderMsg(const ric_interface_ros::Encoder::ConstPtr& msg)
     diagnostic_msgs::DiagnosticStatus diag_stat;
     diag_stat.hardware_id = std::to_string(msg->id);
 
-if (msg->ticks != 0)
-	ROS_ERROR("id: %d, ticks: %lu", msg->id, msg->ticks);
-
     double new_pos = ticksToRads(msg->ticks);
 
     switch (msg->id)
@@ -366,10 +361,14 @@ void RicBoard::speakMsg(const std::string &msg)
 
 void RicBoard::updateWheelPosition(wheel &wheel, double new_pos)
 {
+    wheel.lock.lock();
+
     if (wheel.reverse_feedback)
         new_pos *= -1;
 
     wheel.position = new_pos;
+
+    wheel.lock.unlock();
 }
 
 void RicBoard::onKeepaliveMsg(const ric_interface_ros::Keepalive::ConstPtr& msg)
@@ -514,7 +513,7 @@ void RicBoard::write(const ros::Time &now, const ros::Duration& duration)
 
 }
 
-double RicBoard::ticksToRads(long ticks)
+double RicBoard::ticksToRads(int32_t ticks)
 {
-    return (ticks / ENC_TICKS_PER_ROUND) * 2.0 * M_PI;
+    return ((double)ticks / (double)ENC_TICKS_PER_ROUND) * 2.0 * M_PI;
 }

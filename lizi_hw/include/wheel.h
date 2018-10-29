@@ -36,6 +36,8 @@
 #ifndef LIZI_HW_WHEEL_H
 #define LIZI_HW_WHEEL_H
 
+#include <mutex>
+
 struct wheel
 {
     std::string joint_name;
@@ -50,6 +52,7 @@ struct wheel
     double vel_lpf_alpha = 0;
     bool reverse_command = false;
     bool reverse_feedback = false;
+    std::mutex lock;
 };
 
 #endif //LIZI_HW_WHEEL_H
