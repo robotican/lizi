@@ -62,7 +62,7 @@ wget https://github.com/robotican/diff_drive_slip_controller/archive/V"$DIFF_SLI
 tar -xvzf V"$DIFF_SLIP_CONTROLLER_V".tar.gz
 rm V"$DIFF_SLIP_CONTROLLER_V".tar.gz
 
-RIC_INTERFACE_ROS_V="1.0.4"
+RIC_INTERFACE_ROS_V="1.0.5"
 wget https://github.com/robotican/ric_interface_ros/archive/V"$RIC_INTERFACE_ROS_V".tar.gz
 tar -xvzf V"$RIC_INTERFACE_ROS_V".tar.gz
 rm V"$RIC_INTERFACE_ROS_V".tar.gz
@@ -72,7 +72,7 @@ wget https://github.com/robotican/mobilican_macros/archive/V"$MOBILICAN_MACROS_V
 tar -xvzf V"$MOBILICAN_MACROS_V".tar.gz
 rm V"$MOBILICAN_MACROS_V".tar.gz
 
-LPF_ROS_V="1.0.0"
+LPF_ROS_V="1.0.1"
 wget https://github.com/elhayra/lpf_ros/archive/V"$LPF_ROS_V".tar.gz
 tar -xvzf V"$LPF_ROS_V".tar.gz
 rm V"$LPF_ROS_V".tar.gz
