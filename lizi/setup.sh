@@ -62,7 +62,7 @@ wget https://github.com/robotican/diff_drive_slip_controller/archive/V"$DIFF_SLI
 tar -xvzf V"$DIFF_SLIP_CONTROLLER_V".tar.gz
 rm V"$DIFF_SLIP_CONTROLLER_V".tar.gz
 
-RIC_INTERFACE_ROS_V="1.0.5"
+RIC_INTERFACE_ROS_V="1.0.6"
 wget https://github.com/robotican/ric_interface_ros/archive/V"$RIC_INTERFACE_ROS_V".tar.gz
 tar -xvzf V"$RIC_INTERFACE_ROS_V".tar.gz
 rm V"$RIC_INTERFACE_ROS_V".tar.gz
