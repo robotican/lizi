@@ -19,7 +19,7 @@ ric_servo_bias: 0
 
 # motors over voltage protection settings
 enable_motors_protection: true
-protection_error_threshold: 0.9 # percentage % of the setpoint 0-1
+protection_error_threshold: 0.7 # percentage % of the setpoint 0-1
 protection_time_threshold: 2.0 # sec
-protection_output_threshold: 200 # 0-500
+protection_output_threshold: 100 # 0-500
 
