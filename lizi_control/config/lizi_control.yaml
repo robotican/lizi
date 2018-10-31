@@ -45,5 +45,5 @@ mobile_base_controller:
       has_velocity_limits    : true
       max_velocity           : 3.0  # rad/s
       has_acceleration_limits: true
-      max_acceleration       : 1.0  # rad/s^2
-      min_acceleration       : -1.0  # rad/s^2
+      max_acceleration       : 0.5  # rad/s^2
+      min_acceleration       : -0.5  # rad/s^2
