@@ -60,7 +60,29 @@ roslaunch lizi lizi.launch gazebo:=true gmapping:=true lidar:=true move_base:=tr
 You can see the full list of available topics using ```rostopic list``` .
 Please disregard topics that starts with ```/ric/...``` as they are used for system debugging and communication b/w lizi hardware drivers and ros.
 
-Here are some of the most commonly used topics:
+Here is a list of the most commonly used topics:
+
+```/rgb_cam/image_raw``` - front rgb camera raw image
+
+```/camera/color/image_raw``` - front 3d camera raw (2d) image
+
+```/camera/depth/color/points``` - front 3d camera point cloud
+
+```/gps``` - gps data (if gps got fix)
+
+```/imu/data``` - IMU data
+
+```/scan``` - LIDAR 2d scan
+
+```/urf/left``` - Left ultrasonic range finder
+
+```/urf/right``` - Right ultrasonic range finder
+
+```/urf/rear``` - Rear ultrasonic range finder
+
+```/battery``` - Battery info
+
+```/mobile_base_controller/cmd_vel``` - Send twist commands on this topic to drive the robot
 
 
 *Please note: some of these topics will only apear when adding the right argument to the launch command. E.g. rgb camera topics will apear when ```cam``` argument is added to the basic launch command.
