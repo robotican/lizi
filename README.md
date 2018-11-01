@@ -16,7 +16,7 @@ cd ~/catkin_ws/src/lizi/lizi
 ```
 ./setup.sh
 ```
-Note: setup script will execute apt-get upgrade and update
+*Note: setup script will execute apt-get upgrade and update
 
 ## Cheat sheet
 
@@ -63,4 +63,4 @@ Please disregard topics that starts with ```/ric/...``` as they are used for sys
 Here are some of the most commonly used topics:
 
 
-Please note: some of these topics will only apear when adding the right argument to the launch command. E.g. rgb camera topics will apear when ```cam``` argument is added to the basic launch command.
+*Please note: some of these topics will only apear when adding the right argument to the launch command. E.g. rgb camera topics will apear when ```cam``` argument is added to the basic launch command.
