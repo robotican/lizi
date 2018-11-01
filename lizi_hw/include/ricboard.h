@@ -104,7 +104,6 @@ class RicBoard
 
 private:
 
-    int keepalive_timeouts_ = 0;
     bool got_keepalive_ = false;
     bool first_keepalive_ = true;
 

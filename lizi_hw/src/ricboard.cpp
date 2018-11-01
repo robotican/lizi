@@ -221,10 +221,25 @@ void RicBoard::onLocationMsg(const ric_interface_ros::Location::ConstPtr &msg)
     diag_stat.name = "gps";
     diag_stat.hardware_id = std::to_string(msg->id);
 
+    sensor_msgs::NavSatFix gps_msg;
+    gps_msg.header.frame_id = "base_link";
+    gps_msg.latitude = msg->lat;
+    gps_msg.longitude = msg->lon;
+    gps_msg.altitude = msg->alt;
+    gps_msg.status.service = sensor_msgs::NavSatStatus::SERVICE_GPS;
+
     if (msg->status == ric::protocol::package::Status::READ_FAIL)
     {
         diag_stat.level = diagnostic_msgs::DiagnosticStatus::ERROR;
         diag_stat.message = "failed to read GPS";
+    }
+    else if (msg->status == ric::protocol::package::Status::READ_WARN)
+    {
+        gps_msg.status.status = sensor_msgs::NavSatStatus::STATUS_NO_FIX;
+        gps_pub_.publish(gps_msg);
+
+        diag_stat.level = diagnostic_msgs::DiagnosticStatus::WARN;
+        diag_stat.message = "no fix";
     }
     else if (msg->status == ric::protocol::package::Status::OK)
     {
@@ -382,7 +397,6 @@ void RicBoard::onKeepaliveMsg(const ric_interface_ros::Keepalive::ConstPtr& msg)
         first_keepalive_ = false;
     }
     got_keepalive_ = true;
-    keepalive_timeouts_ = 0;
 }
 
 void RicBoard::onOrientationMsg(const ric_interface_ros::Orientation::ConstPtr& msg)

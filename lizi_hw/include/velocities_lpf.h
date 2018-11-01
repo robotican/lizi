@@ -36,10 +36,11 @@
 #ifndef LIZI_HW_VELOCITIES_LPF_H
 #define LIZI_HW_VELOCITIES_LPF_H
 
-#define ZERO_THRESH 0.00001 //below this speed, round speed to 0
-
 #include <lpf_ros/lpf_ros.h>
 #include "wheel.h"
+
+#define ZERO_THRESH 0.00001 //below this speed, round speed to 0
+
 
 class VelocitiesLpf
 {
