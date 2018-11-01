@@ -22,12 +22,12 @@ Note: setup script will execute apt-get upgrade and update
 
 ### Robot launch command
 
-* Basic launch:
+Basic launch:
 ```
 roslaunch lizi lizi.launch
 ```
 
-* You can add arguments to the basic launch command, to enable capabilities. Some commonly used arguments:
+You can add arguments to the basic launch command, to enable capabilities. Some commonly used arguments:
 
 ```gazebo``` - launch robot in gazebo simulation
 
