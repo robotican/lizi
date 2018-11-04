@@ -284,20 +284,20 @@ void RicBoard::onBatteryMsg(const ric_interface_ros::Battery::ConstPtr &msg)
     }
     else if (msg->status == ric::protocol::package::Status::OK)
     {
-        sensor_msgs::BatteryState batt_msg;
-        batt_msg.header.frame_id = "base_link";
-        batt_msg.voltage = msg->value;
-        batt_msg.capacity = 11.1;
-        batt_msg.percentage = ((msg->value - BATT_MIN)  / (BATT_MAX - BATT_MIN)) * 100.0;
-        batt_msg.power_supply_technology = sensor_msgs::BatteryState::POWER_SUPPLY_TECHNOLOGY_LION;
-        batt_msg.location = "bottom of the robot";
-        for (int i=0; i<BATT_CELLS; i++)
-            batt_msg.cell_voltage.push_back(msg->value / BATT_CELLS);
-
-        battery_pub_.publish(batt_msg);
-
         diag_stat.level = diagnostic_msgs::DiagnosticStatus::OK;
     }
+
+    sensor_msgs::BatteryState batt_msg;
+    batt_msg.header.frame_id = "base_link";
+    batt_msg.voltage = msg->value;
+    batt_msg.capacity = 11.1;
+    batt_msg.percentage = ((msg->value - BATT_MIN)  / (BATT_MAX - BATT_MIN)) * 100.0;
+    batt_msg.power_supply_technology = sensor_msgs::BatteryState::POWER_SUPPLY_TECHNOLOGY_LION;
+    batt_msg.location = "bottom of the robot";
+    for (int i=0; i<BATT_CELLS; i++)
+        batt_msg.cell_voltage.push_back(msg->value / BATT_CELLS);
+
+    battery_pub_.publish(batt_msg);
 
     sendDiagnosticsMsg(diag_stat);
 }
