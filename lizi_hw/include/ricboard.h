@@ -96,7 +96,7 @@
 #define ACCEL_OFFSET_Z              0.1
 
 #define BATT_MAX                   16.7
-#define BATT_MIN                   13.5
+#define BATT_MIN                   12.8
 #define BATT_CELLS                 4
 
 class RicBoard
