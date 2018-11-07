@@ -7,6 +7,13 @@ WHITE_TXT='\e[1;37m'
 RED_TXT='\e[31m'
 NO_COLOR='\033[0m'
 
+printf "${GREEN_TXT}\n
+______  __    ___          ___  _____      ___   ___         ______
+ _____ |__\  |   |  |     |   |   |    |  |     /   \  |\  | _____
+  ____ | \   |   |  |___  |   |   |    |  |     |___|  | \ | ____
+   ___ |  \  |___|  |___| |___|   |    |  |___  |   |  |  \| ___
+
+\n${NO_COLOR}"
 
 printf "${WHITE_TXT}\n***Installing Lizi ROS-Kinetic Package***\n${NO_COLOR}"
 
