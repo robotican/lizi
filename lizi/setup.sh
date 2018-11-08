@@ -89,7 +89,7 @@ wget https://github.com/robotican/espeak_ros/archive/V"$ESPEAK_ROS_V".tar.gz
 tar -xvzf V"$ESPEAK_ROS_V".tar.gz
 rm V"$ESPEAK_ROS_V".tar.gz
 
-MOBILICAN_RULES_V="1.0.0"
+MOBILICAN_RULES_V="1.0.1"
 wget https://github.com/robotican/mobilican_rules/archive/V"$MOBILICAN_RULES_V".tar.gz
 tar -xvzf V"$MOBILICAN_RULES_V".tar.gz
 rm V"$MOBILICAN_RULES_V".tar.gz
