@@ -3,7 +3,7 @@ rolling_window: false
 track_unknown_space: true
 
 inflation_global:
-    inflation_radius: 0.55
+    inflation_radius: 0.05
     cost_scaling_factor: 10
 
 plugins:
