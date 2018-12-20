@@ -35,7 +35,7 @@
     
     <group if="$(arg amcl)">
         <include file="$(find lizi_control)/launch/lizi_controllers.launch" >
-            <arg name="enable_mbc_odom_tf" value="false"/>
+            <arg name="enable_mbc_odom_tf" value="true"/>
         </include>
     </group>
     
@@ -124,9 +124,9 @@
 
     <group if="$(arg amcl)">
         <include file="$(find lizi_navigation)/launch/amcl.launch" >
-            <arg name="x" value="$(arg x)"/>
-            <arg name="y" value="$(arg y)"/>
-            <arg name="Y" value="$(arg Y)"/>
+            <arg name="initial_pose_x" value="$(arg x)"/>
+            <arg name="initial_pose_y" value="$(arg y)"/>
+            <arg name="initial_pose_a" value="$(arg Y)"/>
 	</include>
     </group>
     
