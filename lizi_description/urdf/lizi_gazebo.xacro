@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="lizi" description="Lizi robot">
-    
+
     <xacro:include filename="$(find lizi_description)/urdf/lizi.xacro" />
     <xacro:include filename="$(find mobilican_macros)/macros/depth_cam.xacro" />
     <xacro:include filename="$(find mobilican_macros)/macros/cam.xacro" />
@@ -12,7 +12,7 @@
 
     <xacro:property name="M_PI" value="3.14159265358979" />
     <xacro:property name="URF_FOV" value="${10.0*M_PI/180}" />
-    
+
     <xacro:arg name="controllers" default="true"/>
     <xacro:arg name="urf" default="false"/>
     <xacro:arg name="imu" default="false"/>
@@ -20,84 +20,130 @@
     <xacro:arg name="lidar" default="false"/>
     <xacro:arg name="cam" default="false"/>
     <xacro:arg name="depth_cam" default="false"/>
-    
-   
+    <xacro:arg name="publish_odom_tf" default="false"/>
+
+
+    <gazebo>
+   <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+  <updateRate>50.0</updateRate>
+     <robotNamespace>/</robotNamespace>
+     <leftFrontJoint>front_left_wheel_joint</leftFrontJoint>
+     <rightFrontJoint>front_right_wheel_joint</rightFrontJoint>
+     <leftRearJoint>rear_left_wheel_joint</leftRearJoint>
+     <rightRearJoint>rear_right_wheel_joint</rightRearJoint>
+     <wheelSeparation>0.26</wheelSeparation>
+     <wheelDiameter>0.152</wheelDiameter>
+     <robotBaseFrame>base_footprint</robotBaseFrame>
+     <torque>20</torque>
+     <commandTopic>/mobile_base_controller/cmd_vel</commandTopic>
+     <broadcastTF>$(arg publish_odom_tf)</broadcastTF>
+     <odometryTopic>/mobile_base_controller/odom</odometryTopic>
+    <odometryFrame>odom</odometryFrame>
+    <covariance_x>0.000100</covariance_x>
+    <covariance_y>0.000100</covariance_y>
+    <covariance_yaw>0.01</covariance_yaw>
+
+  <!--
+  libgazebo_ros_diff_drive
+
+  <commandTopic>/mobile_base_controller/cmd_vel</commandTopic>
+  <odometryTopic>/mobile_base_controller/odom</odometryTopic>
+  <odometryFrame>odom</odometryFrame>
+  <odometrySource>world</odometrySource>
+  <publishOdomTF>true</publishOdomTF>
+  <robotBaseFrame>base_footprint</robotBaseFrame>
+  <publishWheelTF>false</publishWheelTF>
+  <publishTf>$(arg publish_odom_tf)</publishTf>
+  <publishWheelJointState>true</publishWheelJointState>
+  <legacyMode>false</legacyMode>
+  <updateRate>30</updateRate>
+  <leftJoint>front_left_wheel_joint</leftJoint>
+  <rightJoint>front_right_wheel_joint</rightJoint>
+  <wheelSeparation>0.260</wheelSeparation>
+  <wheelDiameter>0.142</wheelDiameter>
+  <wheelAcceleration>1</wheelAcceleration>
+  <wheelTorque>10</wheelTorque>
+  <rosDebugLevel>na</rosDebugLevel>
+-->
+   </plugin>
+ </gazebo>
+
    <xacro:if value="$(arg cam)">
-       
-        <xacro:Camera name="rgb_cam" 
-                      link="rgb_cam_link" 
-                      image_width="1280" 
-                      image_height="720" 
-                      image_format="R8G8B8" 
-                      clip_near="0.02" 
+
+        <xacro:Camera name="rgb_cam"
+                      link="rgb_cam_link"
+                      image_width="1280"
+                      image_height="720"
+                      image_format="R8G8B8"
+                      clip_near="0.02"
                       clip_far="200"
                       image_topic="image_raw"
                       info_topic="info"
                       update_rate="30"
                       horizontal_fov="1.064" />
-            
+
     </xacro:if>
-        
+
     <xacro:if value="$(arg depth_cam)">
-        
-        <xacro:DepthCam name="camera" 
-                        link="camera_link" 
+
+        <xacro:DepthCam name="camera"
+                        link="camera_link"
                         optical_frame="camera_depth_optical_frame"
-                        horizontal_fov="1.592" 
+                        horizontal_fov="1.592"
                         img_width="1280"
-                        img_height="800" 
-                        img_format="B8G8R8" 
-                        clip_near="0.1" 
-                        clip_far="200" 
-                        update_rate="30.0" 
-                        image_topic="color/image_raw" 
-                        depth_topic="depth/color/image_raw" 
-                        cloud_topic="depth/color/points" 
-                        info_topic="color/camera_info" 
-                        depth_info_topic="depth/camera_info" 
-                        pointcloud_cuttoff="0.2" /> 
-        
+                        img_height="800"
+                        img_format="B8G8R8"
+                        clip_near="0.1"
+                        clip_far="200"
+                        update_rate="30.0"
+                        image_topic="color/image_raw"
+                        depth_topic="depth/color/image_raw"
+                        cloud_topic="depth/color/points"
+                        info_topic="color/camera_info"
+                        depth_info_topic="depth/camera_info"
+                        pointcloud_cuttoff="0.2" />
+
     </xacro:if>
-   
-       
+
+
     <xacro:if value="$(arg urf)">
         <xacro:urf name="left" link="left_urf_link" topic="urf/left" fov="${10.0*M_PI/180.0}" min="0.3" max="5.0" update_rate="10"/>
         <xacro:urf name="right" link="right_urf_link" topic="urf/right" fov="${10.0*M_PI/180.0}" min="0.3" max="5.0" update_rate="10"/>
         <xacro:urf name="rear" link="rear_urf_link" topic="urf/rear" fov="${10.0*M_PI/180.0}" min="0.3" max="5.0" update_rate="10"/>
     </xacro:if>
-        
+
     <xacro:if value="$(arg lidar)">
-        <xacro:lidar name="lidar" 
-                     link="laser_link" 
-                     topic="scan" 
-                     update_rate="10" 
-                     samples="720" 
-                     resolution="1" 
-                     min_angle="-1.5707" 
-                     max_angle="1.5707" 
-                     range_min="0.1" 
-                     range_max="30.0" 
+        <xacro:lidar name="lidar"
+                     link="laser_link"
+                     topic="scan"
+                     update_rate="10"
+                     samples="720"
+                     resolution="1"
+                     min_angle="-1.5707"
+                     max_angle="1.5707"
+                     range_min="0.1"
+                     range_max="30.0"
                      range_resolution="0.01" />
     </xacro:if>
-        
+
     <xacro:if value="$(arg gps)">
         <xacro:gps link="base_link" hz="5" topic="gps" lat="31.262218" long="34.80146100" alt="298"/>
     </xacro:if>
-        
+
     <xacro:if value="$(arg imu)">
         <xacro:imu link="base_link" hz="50" topic="imu" />
     </xacro:if>
 
-            
+
     <!-- controller manager and hardware interfaces -->
     <xacro:if value="$(arg controllers)">
-        
+
         <gazebo>
             <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
                 <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
             </plugin>
         </gazebo>
-        
+
         <!-- joints -->
         <transmission name="front_left_wheel_joint_trans">
             <type>transmission_interface/SimpleTransmission</type>
@@ -108,7 +154,7 @@
                 <mechanicalReduction>1</mechanicalReduction>
             </actuator>
         </transmission>
-        
+
         <transmission name="front_right_wheel_joint_trans">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="front_right_wheel_joint">
@@ -118,7 +164,7 @@
                 <mechanicalReduction>1</mechanicalReduction>
             </actuator>
         </transmission>
-        
+
         <transmission name="rear_left_wheel_joint_trans">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="rear_left_wheel_joint">
@@ -128,7 +174,7 @@
                 <mechanicalReduction>1</mechanicalReduction>
             </actuator>
         </transmission>
-        
+
         <transmission name="rear_right_wheel_joint_trans">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="rear_right_wheel_joint">
@@ -138,12 +184,12 @@
                 <mechanicalReduction>1</mechanicalReduction>
             </actuator>
         </transmission>
-        
+
     </xacro:if>
-    
+
     <xacro:property name="mu1" value="1.0" />
     <xacro:property name="mu2" value="1.0" />
-            
+
     <gazebo reference="front_left_wheel_link">
         <!-- kp and kd for rubber -->
         <kp>1000000.0</kp>
@@ -155,7 +201,7 @@
         <minDepth>0.00</minDepth>
         <material>Gazebo/DarkGrey</material>
     </gazebo>
-    
+
     <gazebo reference="front_right_wheel_link">
         <!-- kp and kd for rubber -->
         <kp>1000000.0</kp>
@@ -167,7 +213,7 @@
         <minDepth>0.00</minDepth>
         <material>Gazebo/DarkGrey</material>
     </gazebo>
-    
+
     <gazebo reference="rear_left_wheel_link">
         <!-- kp and kd for rubber -->
         <kp>1000000.0</kp>
@@ -179,7 +225,7 @@
         <minDepth>0.00</minDepth>
         <material>Gazebo/DarkGrey</material>
     </gazebo>
-    
+
     <gazebo reference="rear_right_wheel_link">
     <!-- kp and kd for rubber -->
         <kp>1000000.0</kp>
@@ -192,7 +238,7 @@
         <material>Gazebo/DarkGrey</material>
     </gazebo>
 
-    
+
     <gazebo reference="base_link">
         <material>Gazebo/Grass</material>
     </gazebo>
@@ -212,4 +258,3 @@
         <material>Gazebo/Grey</material>
     </gazebo>
 </robot>
-        
